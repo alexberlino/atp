@@ -3,6 +3,13 @@ import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
 
+st.set_page_config(
+    page_title="ATP Stats",  # Title of your app
+    page_icon="🎾",  # Icon for the page
+    layout="wide",  # Wide layout for better use in iframe
+    initial_sidebar_state="collapsed"  # Sidebar collapsed by default
+)
+
 # Load Data
 df = pd.read_csv("rank_atp.csv")
 
