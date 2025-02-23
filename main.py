@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # Load Data
-df = pd.read_csv("atp_rankings.csv.csv")
+df = pd.read_csv("atp_rankings.csv")
 
 # Get the file's last modification time
 file_path = "rank_atp.csv"
