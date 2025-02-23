@@ -145,32 +145,51 @@ flag_html += "</div>"
 # Display flags
 st.markdown(flag_html, unsafe_allow_html=True)
 
+
+# hide github
+st.markdown("[GitHub](https://github.com/alexberlino)", unsafe_allow_html=True)
+
+
 # --- Age Analysis (Curve with Mean & Quartiles) ---
+# Age Analysis
 age_values = df_top_n["Age"].dropna()
 q1, q3 = np.percentile(age_values, [25, 75])
 mean_age = np.mean(age_values)
 
+# Display Age Summary Table
+st.markdown("### Age Summary")
+age_summary_df = pd.DataFrame({
+    "Metric": ["Average Age", "Q1 (25th Percentile)", "Q3 (75th Percentile)"],
+    "Value": [round(mean_age, 2), round(q1, 2), round(q3, 2)]
+})
+st.table(age_summary_df)
+
+# --- Age Distribution as Line Chart ---
+# --- Age Distribution Grouped by 5-Year Intervals ---
+bins = list(range(15, 51, 5))  # 16-20, 21-25, ..., 46-50
+labels = [f"{b}-{b+4}" for b in bins[:-1]]
+df_top_n["Age Group"] = pd.cut(
+    df_top_n["Age"], bins=bins, labels=labels, right=True)
+age_group_counts = df_top_n["Age Group"].value_counts().sort_index()
+
 fig_age = go.Figure()
-fig_age.add_trace(go.Histogram(
-    x=age_values,
-    nbinsx=20,
-    marker=dict(color='rgb(231, 76, 60)', line=dict(
-        color='rgb(100, 30, 22)', width=1)),
-    opacity=0.75,
+fig_age.add_trace(go.Scatter(
+    x=age_group_counts.index,
+    y=age_group_counts.values,
+    mode='lines+markers',
+    marker=dict(size=8, color='rgb(231, 76, 60)'),
+    line=dict(width=2, color='rgb(100, 30, 22)')
 ))
-fig_age.add_vline(x=mean_age, line_dash="dash", line_color="blue",
-                  annotation_text=f"Mean: {mean_age:.2f}")
-fig_age.add_vline(x=q1, line_dash="dot", line_color="green",
-                  annotation_text=f"Q1: {q1:.2f}")
-fig_age.add_vline(x=q3, line_dash="dot", line_color="green",
-                  annotation_text=f"Q3: {q3:.2f}")
 
 fig_age.update_layout(
-    title=f"Age Distribution of Top {top_n} Players",
-    xaxis=dict(title="Age"),
+    title=f"Age Group Distribution of Top {top_n} Players",
+    xaxis=dict(title="Age Group"),
     yaxis=dict(title="Number of Players"),
     showlegend=False,
     template="plotly_white",
     height=400,
 )
 st.plotly_chart(fig_age)
+
+# Hide GitHub link
+st.markdown("[GitHub](https://github.com/alexberlino)", unsafe_allow_html=True)
