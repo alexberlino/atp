@@ -83,6 +83,8 @@ fig.add_trace(go.Bar(
         color='rgb(8, 48, 107)', width=1)),
     text=country_counts_top["Number of Players"],
     textposition='inside',
+    # Change text color to white and bold
+    textfont=dict(color="white", size=14, family="Arial Black")
 ))
 
 # Update layout
