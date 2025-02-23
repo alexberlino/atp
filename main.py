@@ -190,6 +190,3 @@ fig_age.update_layout(
     height=400,
 )
 st.plotly_chart(fig_age)
-
-# Hide GitHub link
-st.markdown("[GitHub](https://github.com/alexberlino)", unsafe_allow_html=True)
