@@ -41,7 +41,7 @@ df_new.to_csv(original_file, index=False)  # Overwrite original file
 
 
 # Make sure data is sorted by rank
-df = df.sort_values(by="rank")
+df = df.sort_values(by="Rank")
 
 # Add buttons for selecting top N players (horizontal layout)
 st.markdown("### Top ATP Stats country and age")
