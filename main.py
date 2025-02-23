@@ -47,7 +47,7 @@ df = df.sort_values(by="Rank")
 st.markdown("### Top ATP Stats country and age")
 top_n = st.radio(
     "Select top N players",
-    options=[10,50, 100, 200, 500, 1000],
+    options=[10,20, 50, 100, 200, 500, 1000],
     index=2,  # Default to top 1000
     horizontal=True
 )
