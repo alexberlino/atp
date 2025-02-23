@@ -56,7 +56,7 @@ top_n = st.radio(
 df_top_n = df.head(top_n)
 
 # Generate the count of players by country
-country_counts = df_top_n["Nationality"].value_counts().reset_index()
+country_counts = df_top_n["Country"].value_counts().reset_index()
 country_counts.columns = ["Country", "Number of Players"]
 
 # Get top 10 countries
