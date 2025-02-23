@@ -41,7 +41,7 @@ flag_codes = {
     "ARG": "ar", "AUS": "au", "GER": "de", "SUI": "ch", "CAN": "ca",
     "RUS": "🏳️", "JPN": "jp", "CZE": "cz", "SRB": "rs", "AUT": "at",
     "NED": "nl", "POL": "pl", "CRO": "hr", "BRA": "br", "RSA": "za",
-    "BEL": "be", "POR": "pt", "SWE": "se", "NOR": "no", "GRE": "gr", "CHN":"cn"
+    "BEL": "be", "POR": "pt", "SWE": "se", "NOR": "no", "GRE": "gr", "CHN": "cn", "CHI": "cn"
 }
 
 # Create the figure
