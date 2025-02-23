@@ -148,9 +148,6 @@ flag_html += "</div>"
 st.markdown(flag_html, unsafe_allow_html=True)
 
 
-# hide github
-st.markdown("[GitHub](https://github.com/alexberlino)", unsafe_allow_html=True)
-
 
 # --- Age Analysis (Curve with Mean & Quartiles) ---
 # Age Analysis
