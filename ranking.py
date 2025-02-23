@@ -1,6 +1,8 @@
 import shutil
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import os
 import csv
 from datetime import datetime
@@ -8,6 +10,7 @@ import time
 import re
 import pandas as pd
 import subprocess
+
 
 
 def setup_driver():
@@ -22,27 +25,34 @@ def setup_driver():
 
 
 def is_properly_formatted_row(cells):
-    """ Check if the row matches the expected format of the ranking data """
+    """
+    Check if the row matches the expected format of the ranking data
+    """
     if len(cells) < 7:
         return False
 
     try:
+        # Check rank format (should be just a number)
         rank = cells[0].text.strip()
         if not rank.isdigit():
             return False
 
+        # Check name format (should be two or more words)
         name = cells[3].text.strip()
         if len(name.split()) < 2:
             return False
 
+        # Check age (should be just a number)
         age = cells[4].text.strip()
         if not age.isdigit():
             return False
 
+        # Check country code (should be 3 uppercase letters)
         country = cells[5].text.strip()
         if not (len(country) == 3 and country.isalpha() and country.isupper()):
             return False
 
+        # Check points (should be a number without text)
         points = cells[6].text.strip()
         if not points.replace(",", "").isdigit():
             return False
@@ -54,13 +64,13 @@ def is_properly_formatted_row(cells):
 
 
 def extract_player_data(row):
-    """ Extracts player data from a row if properly formatted """
     try:
         cells = row.find_elements(By.TAG_NAME, "td")
 
         if not is_properly_formatted_row(cells):
             return None
 
+        # Extract data from properly formatted row
         rank = cells[0].text.strip()
         name = cells[3].text.strip()
         age = cells[4].text.strip()
@@ -68,6 +78,7 @@ def extract_player_data(row):
         points = cells[6].text.strip()
         change = ""
 
+        # Try to get ranking change if it exists
         if len(cells) > 7:
             change_text = cells[7].text.strip()
             change_match = re.search(r'[+-]\d+', change_text)
@@ -82,7 +93,6 @@ def extract_player_data(row):
 
 
 def save_to_csv(data, folder='atp_rankings_data'):
-    """ Save data to CSV """
     if not os.path.exists(folder):
         os.makedirs(folder)
 
@@ -98,20 +108,28 @@ def save_to_csv(data, folder='atp_rankings_data'):
 
 
 def extract_rankings():
-    """ Extract ATP rankings data from the website """
     url = 'https://live-tennis.eu/en/atp-live-ranking'
     driver = None
 
     try:
+        print("Initializing Chrome...")
         driver = setup_driver()
+
+        print(f"Navigating to {url}...")
         driver.get(url)
+
+        print("Waiting for page load...")
         time.sleep(15)
 
+        print("Finding ranking rows...")
         rows = driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
+
+        print(f"Found {len(rows)} potential rows")
+
         data = []
         found_first_valid = False
         consecutive_invalid = 0
-        max_consecutive_invalid = 10
+        max_consecutive_invalid = 10  # Stop if we find too many invalid rows after valid ones
 
         for row in rows:
             player_data = extract_player_data(row)
@@ -125,11 +143,15 @@ def extract_rankings():
                 if consecutive_invalid > max_consecutive_invalid:
                     break
 
+        # Sort by rank to ensure proper ordering
         data.sort(key=lambda x: int(x[0]))
+
         return data
 
     except Exception as e:
         print(f"Error during scraping: {e}")
+        if driver:
+            print("Current URL:", driver.current_url)
         return []
 
     finally:
@@ -148,11 +170,16 @@ def main():
         if data:
             save_to_csv(data)
             print(f"Successfully extracted {len(data)} player rankings.")
+            # Print first few entries to verify format
+            print("\nFirst few entries:")
+            for entry in data[:5]:
+                print(entry)
             break
         else:
             print(f"No data extracted on attempt {attempt + 1}")
             if attempt < max_attempts - 1:
                 wait_time = 10 * (attempt + 1)
+                print(f"Waiting {wait_time} seconds before retry...")
                 time.sleep(wait_time)
     else:
         print("Failed to extract data after all attempts.")
@@ -161,23 +188,43 @@ def main():
 if __name__ == "__main__":
     main()
 
-# Backup and Git commit
+
+# Define the original file and the new file with the date
 original_file = "atp_rankings.csv"
 date_str = datetime.now().strftime("%Y-%m-%d")
 backup_file = f"atp_rankings_{date_str}.csv"
 
-# Copy the current file to the backup
+# Make a copy of the file with the current date
 shutil.copy(original_file, backup_file)
 
-# Update original file with new data
-df_new = pd.read_csv(f"atp_rankings_data/atp_rankings_{date_str}.csv")
+# Update the original file with the new rankings data
+df_new = pd.read_csv(f"atp_rankings_2025-02-23.csv")
 df_new.to_csv(original_file, index=False)  # Overwrite original file
 
-# Stage changes, commit, and push
+
 repo_dir = '/Users/alexbieth/Documents/dev/atp'
 os.chdir(repo_dir)
 
+# Stage changes
 subprocess.run(['git', 'add', '.'])
-commit_message = f"Add ATP rankings data for {date_str}"
+
+# Commit changes
+commit_message = f"Add ATP rankings data for {datetime.now().strftime('%Y-%m-%d')}"
 subprocess.run(['git', 'commit', '-m', commit_message])
+
+# Push changes to GitHub
+subprocess.run(['git', 'push', 'origin', 'main'])
+
+
+repo_dir = '/Users/alexbieth/Documents/dev/atp'
+os.chdir(repo_dir)
+
+# Stage changes
+subprocess.run(['git', 'add', '.'])
+
+# Commit changes
+commit_message = f"Add ATP rankings data for {datetime.now().strftime('%Y-%m-%d')}"
+subprocess.run(['git', 'commit', '-m', commit_message])
+
+# Push changes to GitHub
 subprocess.run(['git', 'push', 'origin', 'main'])
