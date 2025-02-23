@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
+import os
+import shutil
+from datetime import datetime
 
 st.set_page_config(
     page_title="ATP Stats",  # Title of your app
@@ -12,6 +15,30 @@ st.set_page_config(
 
 # Load Data
 df = pd.read_csv("rank_atp.csv")
+
+# Get the file's last modification time
+file_path = "rank_atp.csv"
+last_modified_time = os.path.getmtime(file_path)
+
+# Convert to a readable format
+last_modified_date = datetime.fromtimestamp(
+    last_modified_time).strftime('%B %d, %Y')
+
+# Display last update date
+st.markdown(f"**Last Update:** {last_modified_date}")
+
+# Make a copy of the file with the current date
+original_file = "rank_atp.csv"
+date_str = datetime.now().strftime("%Y-%m-%d")
+backup_file = f"rank_atp_{date_str}.csv"
+
+# Make a copy of the file with the current date
+shutil.copy(original_file, backup_file)
+
+# Overwrite the original file with the new rankings data
+df_new = pd.read_csv(f"atp_rankings_data/atp_rankings_2025-02-23.csv")
+df_new.to_csv(original_file, index=False)  # Overwrite original file
+
 
 # Make sure data is sorted by rank
 df = df.sort_values(by="rank")
@@ -118,33 +145,6 @@ flag_html += "</div>"
 # Display flags
 st.markdown(flag_html, unsafe_allow_html=True)
 
-
-# # --- Country Analysis ---
-# country_counts = df_top_n["Nationality"].value_counts().reset_index()
-# country_counts.columns = ["Country", "Number of Players"]
-# country_counts_top = country_counts.head(10)
-
-# fig_country = go.Figure()
-# fig_country.add_trace(go.Bar(
-#     x=country_counts_top["Country"],
-#     y=country_counts_top["Number of Players"],
-#     marker=dict(color='rgb(52, 152, 219)', line=dict(
-#         color='rgb(8, 48, 107)', width=1)),
-#     text=country_counts_top["Number of Players"],
-#     textposition='inside',
-# ))
-# fig_country.update_layout(
-#     title=f"Top 10 Countries by Player Count (from Top {top_n} Players by Rank)",
-#     yaxis=dict(title="Number of Players", range=[0, max(
-#         country_counts_top["Number of Players"]) * 1.1]),
-#     xaxis=dict(tickangle=-45),
-#     bargap=0.2,
-#     showlegend=False,
-#     template="plotly_white",
-#     height=400,
-# )
-# st.plotly_chart(fig_country)
-
 # --- Age Analysis (Curve with Mean & Quartiles) ---
 age_values = df_top_n["Age"].dropna()
 q1, q3 = np.percentile(age_values, [25, 75])
@@ -154,12 +154,16 @@ fig_age = go.Figure()
 fig_age.add_trace(go.Histogram(
     x=age_values,
     nbinsx=20,
-    marker=dict(color='rgb(231, 76, 60)', line=dict(color='rgb(100, 30, 22)', width=1)),
+    marker=dict(color='rgb(231, 76, 60)', line=dict(
+        color='rgb(100, 30, 22)', width=1)),
     opacity=0.75,
 ))
-fig_age.add_vline(x=mean_age, line_dash="dash", line_color="blue", annotation_text=f"Mean: {mean_age:.2f}")
-fig_age.add_vline(x=q1, line_dash="dot", line_color="green", annotation_text=f"Q1: {q1:.2f}")
-fig_age.add_vline(x=q3, line_dash="dot", line_color="green", annotation_text=f"Q3: {q3:.2f}")
+fig_age.add_vline(x=mean_age, line_dash="dash", line_color="blue",
+                  annotation_text=f"Mean: {mean_age:.2f}")
+fig_age.add_vline(x=q1, line_dash="dot", line_color="green",
+                  annotation_text=f"Q1: {q1:.2f}")
+fig_age.add_vline(x=q3, line_dash="dot", line_color="green",
+                  annotation_text=f"Q3: {q3:.2f}")
 
 fig_age.update_layout(
     title=f"Age Distribution of Top {top_n} Players",
@@ -170,4 +174,3 @@ fig_age.update_layout(
     height=400,
 )
 st.plotly_chart(fig_age)
-
