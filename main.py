@@ -38,8 +38,7 @@ country_counts_top = country_counts.head(10)
 # Country to flag code mapping - add more as needed
 flag_codes = {
     "USA": "us", "ESP": "es", "FRA": "fr", "GBR": "gb", "ITA": "it",
-    "ARG": "ar", "AUS": "au", "GER": "de", "SUI": "ch", "CAN": "ca",
-    "RUS": "", "JPN": "jp", "CZE": "cz", "SRB": "rs", "AUT": "at",
+    "ARG": "ar", "AUS": "au", "GER": "de", "SUI": "ch", "CAN": "ca", "JPN": "jp", "CZE": "cz", "SRB": "rs", "AUT": "at",
     "NED": "nl", "POL": "pl", "CRO": "hr", "BRA": "br", "RSA": "za",
     "BEL": "be", "POR": "pt", "SWE": "se", "NOR": "no", "GRE": "gr", "CHN": "cn", "CHI": "cn"
 }
