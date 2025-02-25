@@ -27,15 +27,6 @@ else:
 # Format for display
 st.markdown(f"**Last Update:** {last_modified_date}")
 
-
-
-
-
-
-
-# Display last update date
-st.markdown(f"**Last Update:** {last_modified_date}")
-
 # Make a copy of the file with the current date
 original_file = "rank_atp.csv"
 date_str = datetime.now().strftime("%Y-%m-%d")
@@ -156,9 +147,6 @@ flag_html += "</div>"
 # Display flags
 st.markdown(flag_html, unsafe_allow_html=True)
 
-
-
-# --- Age Analysis (Curve with Mean & Quartiles) ---
 # Age Analysis
 age_values = df_top_n["Age"].dropna()
 q1, q3 = np.percentile(age_values, [25, 75])
@@ -172,7 +160,6 @@ age_summary_df = pd.DataFrame({
 })
 st.table(age_summary_df)
 
-# --- Age Distribution as Line Chart ---
 # --- Age Distribution Grouped by 5-Year Intervals ---
 bins = list(range(15, 51, 5))  # 16-20, 21-25, ..., 46-50
 labels = [f"{b}-{b+4}" for b in bins[:-1]]
