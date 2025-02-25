@@ -1,0 +1,36 @@
+name: Weekly ATP Rankings Update
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # Runs every Monday at midnight UTC
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  update_rankings:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        sudo apt-get update && sudo apt-get install -y chromium-chromedriver
+        pip install undetected-chromedriver selenium pandas
+
+    - name: Run ranking update script
+      run: python ranking.py
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "github-actions"
+        git config --global user.email "actions@github.com"
+        git add .
+        git commit -m "Automated ATP rankings update" || echo "No changes to commit"
+        git push
