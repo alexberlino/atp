@@ -13,6 +13,7 @@ import subprocess
 
 
 
+
 def setup_driver():
     options = uc.ChromeOptions()
     options.add_argument('--start-maximized')
@@ -199,7 +200,21 @@ shutil.copy(original_file, backup_file)
 
 # Update the original file with the new rankings data
 df_new = pd.read_csv(f"atp_rankings_2025-02-23.csv")
-df_new.to_csv(original_file, index=False)  # Overwrite original file
+# Load existing data if available
+if os.path.exists(original_file):
+    df_existing = pd.read_csv(original_file)
+else:
+    df_existing = pd.DataFrame()
+
+# Only overwrite if the new data is different
+if not df_existing.equals(df_new):
+    df_new.to_csv(original_file, index=False)  # Update rankings file
+    with open("last_updated.txt", "w") as f:
+        # Store last real update date
+        f.write(datetime.now().strftime("%Y-%m-%d"))
+    print("Rankings updated!")
+else:
+    print("No change in ranking data. Not updating the file.")
 
 
 repo_dir = '/Users/alexbieth/Documents/dev/atp'
@@ -219,12 +234,21 @@ subprocess.run(['git', 'push', 'origin', 'main'])
 repo_dir = '/Users/alexbieth/Documents/dev/atp'
 os.chdir(repo_dir)
 
-# Stage changes
-subprocess.run(['git', 'add', '.'])
+try:
+    # Add changes
+    subprocess.run(["git", "add", "."], check=True)
 
-# Commit changes
-commit_message = f"Add ATP rankings data for {datetime.now().strftime('%Y-%m-%d')}"
-subprocess.run(['git', 'commit', '-m', commit_message])
+    # Commit changes (only if there are changes)
+    commit_message = f"Add ATP rankings data for {datetime.now().strftime('%Y-%m-%d')}"
+    commit_result = subprocess.run(
+        ["git", "commit", "-m", commit_message], capture_output=True, text=True)
 
-# Push changes to GitHub
-subprocess.run(['git', 'push', 'origin', 'main'])
+    if "nothing to commit" in commit_result.stdout.lower():
+        print("No changes detected. Skipping push.")
+    else:
+        # Push only if commit was successful
+        subprocess.run(["git", "push", "origin", "main"], check=True)
+        print("Changes pushed to GitHub.")
+
+except subprocess.CalledProcessError as e:
+    print(f"Git command failed: {e}")

@@ -16,13 +16,22 @@ st.set_page_config(
 # Load Data
 df = pd.read_csv("atp_rankings.csv")
 
-# Get the file's last modification time
-file_path = "rank_atp.csv"
-last_modified_time = os.path.getmtime(file_path)
 
-# Convert to a readable format
-last_modified_date = datetime.fromtimestamp(
-    last_modified_time).strftime('%B %d, %Y')
+# Read the last real update date
+if os.path.exists("last_updated.txt"):
+    with open("last_updated.txt", "r") as f:
+        last_modified_date = f.read().strip()
+else:
+    last_modified_date = "Unknown"
+
+# Format for display
+st.markdown(f"**Last Update:** {last_modified_date}")
+
+
+
+
+
+
 
 # Display last update date
 st.markdown(f"**Last Update:** {last_modified_date}")
