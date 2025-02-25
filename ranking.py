@@ -10,8 +10,7 @@ import time
 import re
 import pandas as pd
 import subprocess
-
-
+from datetime import datetime
 
 
 def setup_driver():
@@ -106,6 +105,7 @@ def save_to_csv(data, folder='atp_rankings_data'):
         writer.writerows(data)
 
     print(f"Data saved to {filename}")
+    return filename
 
 
 def extract_rankings():
@@ -160,6 +160,63 @@ def extract_rankings():
             driver.quit()
 
 
+def update_main_rankings_file(new_data_file):
+    """
+    Update the main ATP rankings file with new data
+    """
+    # Define the original file path
+    original_file = "atp_rankings.csv"
+
+    # Create a backup with date in filename first
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    backup_file = f"atp_rankings_{date_str}.csv"
+
+    # Create backup if original exists
+    if os.path.exists(original_file):
+        shutil.copy(original_file, backup_file)
+        print(f"Backup created as {backup_file}")
+
+    # Read the new data
+    df_new = pd.read_csv(new_data_file)
+
+    # Overwrite the original file with new data
+    df_new.to_csv(original_file, index=False)
+
+    # Record the update time
+    with open("last_updated.txt", "w") as f:
+        f.write(datetime.now().strftime("%Y-%m-%d"))
+
+    print(f"Rankings updated in {original_file}!")
+    return original_file
+
+
+def commit_to_git():
+    """
+    Commit and push changes to GitHub repository
+    """
+    repo_dir = '/Users/alexbieth/Documents/dev/atp'
+    os.chdir(repo_dir)
+
+    try:
+        # Add changes
+        subprocess.run(["git", "add", "."], check=True)
+
+        # Commit changes (only if there are changes)
+        commit_message = f"Add ATP rankings data for {datetime.now().strftime('%Y-%m-%d')}"
+        commit_result = subprocess.run(
+            ["git", "commit", "-m", commit_message], capture_output=True, text=True)
+
+        if "nothing to commit" in commit_result.stdout.lower():
+            print("No changes detected. Skipping push.")
+        else:
+            # Push only if commit was successful
+            subprocess.run(["git", "push", "origin", "main"], check=True)
+            print("Changes pushed to GitHub.")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Git command failed: {e}")
+
+
 def main():
     print("Starting ATP rankings extraction...")
     max_attempts = 3
@@ -169,12 +226,20 @@ def main():
         data = extract_rankings()
 
         if data:
-            save_to_csv(data)
+            # Save the data to a date-specific file and get the filename
+            new_data_file = save_to_csv(data)
+
+            # Update the main rankings file
+            update_main_rankings_file(new_data_file)
+
             print(f"Successfully extracted {len(data)} player rankings.")
             # Print first few entries to verify format
             print("\nFirst few entries:")
             for entry in data[:5]:
                 print(entry)
+
+            # Commit changes to Git
+            commit_to_git()
             break
         else:
             print(f"No data extracted on attempt {attempt + 1}")
@@ -188,67 +253,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# Define the original file and the new file with the date
-original_file = "atp_rankings.csv"
-date_str = datetime.now().strftime("%Y-%m-%d")
-backup_file = f"atp_rankings_{date_str}.csv"
-
-# Make a copy of the file with the current date
-shutil.copy(original_file, backup_file)
-
-# Update the original file with the new rankings data
-df_new = pd.read_csv(f"atp_rankings_2025-02-23.csv")
-# Load existing data if available
-if os.path.exists(original_file):
-    df_existing = pd.read_csv(original_file)
-else:
-    df_existing = pd.DataFrame()
-
-# Only overwrite if the new data is different
-if not df_existing.equals(df_new):
-    df_new.to_csv(original_file, index=False)  # Update rankings file
-    with open("last_updated.txt", "w") as f:
-        # Store last real update date
-        f.write(datetime.now().strftime("%Y-%m-%d"))
-    print("Rankings updated!")
-else:
-    print("No change in ranking data. Not updating the file.")
-
-
-repo_dir = '/Users/alexbieth/Documents/dev/atp'
-os.chdir(repo_dir)
-
-# Stage changes
-subprocess.run(['git', 'add', '.'])
-
-# Commit changes
-commit_message = f"Add ATP rankings data for {datetime.now().strftime('%Y-%m-%d')}"
-subprocess.run(['git', 'commit', '-m', commit_message])
-
-# Push changes to GitHub
-subprocess.run(['git', 'push', 'origin', 'main'])
-
-
-repo_dir = '/Users/alexbieth/Documents/dev/atp'
-os.chdir(repo_dir)
-
-try:
-    # Add changes
-    subprocess.run(["git", "add", "."], check=True)
-
-    # Commit changes (only if there are changes)
-    commit_message = f"Add ATP rankings data for {datetime.now().strftime('%Y-%m-%d')}"
-    commit_result = subprocess.run(
-        ["git", "commit", "-m", commit_message], capture_output=True, text=True)
-
-    if "nothing to commit" in commit_result.stdout.lower():
-        print("No changes detected. Skipping push.")
-    else:
-        # Push only if commit was successful
-        subprocess.run(["git", "push", "origin", "main"], check=True)
-        print("Changes pushed to GitHub.")
-
-except subprocess.CalledProcessError as e:
-    print(f"Git command failed: {e}")

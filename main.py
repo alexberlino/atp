@@ -27,19 +27,6 @@ else:
 # Format for display
 st.markdown(f"**Last Update:** {last_modified_date}")
 
-# Make a copy of the file with the current date
-original_file = "rank_atp.csv"
-date_str = datetime.now().strftime("%Y-%m-%d")
-backup_file = f"rank_atp_{date_str}.csv"
-
-# Make a copy of the file with the current date
-shutil.copy(original_file, backup_file)
-
-# Overwrite the original file with the new rankings data
-df_new = pd.read_csv(f"atp_rankings_data/atp_rankings_2025-02-23.csv")
-df_new.to_csv(original_file, index=False)  # Overwrite original file
-
-
 # Make sure data is sorted by rank
 df = df.sort_values(by="Rank")
 
