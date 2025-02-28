@@ -120,7 +120,9 @@ def extract_rankings():
         driver.get(url)
 
         print("Waiting for page load...")
-        time.sleep(15)
+        WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "table tbody tr")))
+
 
         print("Finding ranking rows...")
         rows = driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
@@ -161,28 +163,34 @@ def extract_rankings():
 
 
 def update_main_rankings_file(new_data_file):
-    """
-    Update the main ATP rankings file with new data
-    """
-    # Define the original file path
     original_file = "atp_rankings.csv"
 
-    # Create a backup with date in filename first
+    # Read old data if it exists
+    if os.path.exists(original_file):
+        df_old = pd.read_csv(original_file)
+    else:
+        df_old = None
+
+    # Read new data
+    df_new = pd.read_csv(new_data_file)
+
+    # Compare old and new data
+    if df_old is not None and df_old.equals(df_new):
+        print("No changes in rankings, skipping update.")
+        return original_file  # Exit without updating
+
+    # Backup old data before overwriting
     date_str = datetime.now().strftime("%Y-%m-%d")
     backup_file = f"atp_rankings_{date_str}.csv"
 
-    # Create backup if original exists
     if os.path.exists(original_file):
         shutil.copy(original_file, backup_file)
         print(f"Backup created as {backup_file}")
 
-    # Read the new data
-    df_new = pd.read_csv(new_data_file)
-
-    # Overwrite the original file with new data
+    # Overwrite with new data
     df_new.to_csv(original_file, index=False)
 
-    # Record the update time
+    # Record update time
     with open("last_updated.txt", "w") as f:
         f.write(datetime.now().strftime("%Y-%m-%d"))
 
@@ -191,20 +199,23 @@ def update_main_rankings_file(new_data_file):
 
 
 def commit_to_git():
-    """
-    Commit and push changes to GitHub repository
-    """
     repo_dir = '/Users/alexbieth/Documents/dev/atp'
     os.chdir(repo_dir)
 
     try:
+        # Check if there are changes
+        subprocess.run(["git", "status"], check=True)
+        subprocess.run(["git", "diff", "--stat"],
+                       check=True)  # Debug differences
+
         # Add changes
         subprocess.run(["git", "add", "."], check=True)
 
-        # Commit changes (only if there are changes)
+        # Commit only if there are changes
         commit_message = f"Add ATP rankings data for {datetime.now().strftime('%Y-%m-%d')}"
         commit_result = subprocess.run(
-            ["git", "commit", "-m", commit_message], capture_output=True, text=True)
+            ["git", "commit", "-m", commit_message], capture_output=True, text=True
+        )
 
         if "nothing to commit" in commit_result.stdout.lower():
             print("No changes detected. Skipping push.")
