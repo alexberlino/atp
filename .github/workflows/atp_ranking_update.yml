@@ -1,8 +1,8 @@
-name: Weekly ATP Rankings Update
+name: Daily ATP Rankings Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs every Monday at midnight UTC
+    - cron: '0 0 * * *'  # Runs every day at midnight UTC
   workflow_dispatch:  # Allows manual triggering
 
 permissions:
@@ -22,32 +22,50 @@ jobs:
           python-version: '3.9'
 
       - name: Cache Python dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3  # Updated from v2
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-python-${{ hashFiles('requirements.txt') }}-v2  # Change key to force cache refresh when requirements.txt changes
+          key: ${{ runner.os }}-python-${{ hashFiles('requirements.txt') }}-v3
           restore-keys: |
             ${{ runner.os }}-python-
-        
+
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
           sudo apt-get update && sudo apt-get install -y chromium-chromedriver
           pip install undetected-chromedriver selenium pandas
 
+      - name: Check files before running script
+        run: |
+          echo "Listing files in the repository before script run:"
+          ls -la
+
       - name: Run ranking update script
-        run: python ranking.py
+        run: |
+          echo "Running ranking script..."
+          python ranking.py
+
+      - name: Check files after running script
+        run: |
+          echo "Listing files after script run:"
+          ls -la
+          git diff --stat
+
+      - name: Check Current Branch
+        run: git branch
+
+      - name: Ensure Correct Branch
+        run: |
+          git checkout main
+          git pull origin main
 
       - name: Debug GitHub Authentication
         run: |
           git remote -v
           curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/user
 
-      - name: Commit and push changes
+      - name: Force commit changes
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/alexberlino/atp.git  # Use PAT if needed
-          git add .
-          git commit -m "Automated ATP rankings update" || echo "No changes to commit"
+          git add -A
+          git commit -m "Automated ATP rankings update" --allow-empty
           git push origin main
