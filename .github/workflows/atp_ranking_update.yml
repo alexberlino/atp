@@ -15,14 +15,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Get all history to ensure proper git operations
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
       - name: Cache Python dependencies
-        uses: actions/cache@v3  # Updated from v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-python-${{ hashFiles('requirements.txt') }}-v3
@@ -32,40 +39,30 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          sudo apt-get update && sudo apt-get install -y chromium-chromedriver
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser
           pip install undetected-chromedriver selenium pandas
 
-      - name: Check files before running script
-        run: |
-          echo "Listing files in the repository before script run:"
-          ls -la
-
       - name: Run ranking update script
+        env:
+          # Add environment variables that might be needed for headless Chrome
+          PYTHONUNBUFFERED: 1
+          DISPLAY: :99
         run: |
           echo "Running ranking script..."
+          # Add export for headless mode
+          export HEADLESS=true
           python ranking.py
-
-      - name: Check files after running script
+        
+      - name: Commit and push changes if any
         run: |
-          echo "Listing files after script run:"
-          ls -la
-          git diff --stat
-
-      - name: Check Current Branch
-        run: git branch
-
-      - name: Ensure Correct Branch
-        run: |
-          git checkout main
-          git pull origin main
-
-      - name: Debug GitHub Authentication
-        run: |
-          git remote -v
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/user
-
-      - name: Force commit changes
-        run: |
-          git add -A
-          git commit -m "Automated ATP rankings update" --allow-empty
-          git push origin main
+          # Only commit if there are changes
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "Changes detected, committing..."
+            git add -A
+            git commit -m "Automated ATP rankings update for $(date +'%Y-%m-%d')"
+            git push
+            echo "Changes pushed successfully!"
+          else
+            echo "No changes detected. Nothing to commit."
+          fi
