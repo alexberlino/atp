@@ -1,230 +1,265 @@
-import requests
-from bs4 import BeautifulSoup
-import pandas as pd
+import shutil
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import os
 import csv
 from datetime import datetime
+import time
 import re
+import pandas as pd
 import subprocess
+from datetime import datetime
 
 
-def fetch_rankings():
-    """Fetch ATP rankings using requests and BeautifulSoup instead of Selenium"""
-    print("Fetching ATP rankings...")
+def setup_driver():
+    options = uc.ChromeOptions()
+    options.add_argument('--start-maximized')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument(
+        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+    return uc.Chrome(options=options)
 
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-    }
 
-    url = 'https://live-tennis.eu/en/atp-live-ranking'
+def is_properly_formatted_row(cells):
+    """
+    Check if the row matches the expected format of the ranking data
+    """
+    if len(cells) < 7:
+        return False
 
     try:
-        response = requests.get(url, headers=headers, timeout=30)
-        response.raise_for_status()  # Raise an exception for bad status codes
+        # Check rank format (should be just a number)
+        rank = cells[0].text.strip()
+        if not rank.isdigit():
+            return False
 
-        print(
-            f"Successfully fetched page with status code: {response.status_code}")
-        return response.text
+        # Check name format (should be two or more words)
+        name = cells[3].text.strip()
+        if len(name.split()) < 2:
+            return False
+
+        # Check age (should be just a number)
+        age = cells[4].text.strip()
+        if not age.isdigit():
+            return False
+
+        # Check country code (should be 3 uppercase letters)
+        country = cells[5].text.strip()
+        if not (len(country) == 3 and country.isalpha() and country.isupper()):
+            return False
+
+        # Check points (should be a number without text)
+        points = cells[6].text.strip()
+        if not points.replace(",", "").isdigit():
+            return False
+
+        return True
+
+    except Exception:
+        return False
+
+
+def extract_player_data(row):
+    try:
+        cells = row.find_elements(By.TAG_NAME, "td")
+
+        if not is_properly_formatted_row(cells):
+            return None
+
+        # Extract data from properly formatted row
+        rank = cells[0].text.strip()
+        name = cells[3].text.strip()
+        age = cells[4].text.strip()
+        country = cells[5].text.strip()
+        points = cells[6].text.strip()
+        change = ""
+
+        # Try to get ranking change if it exists
+        if len(cells) > 7:
+            change_text = cells[7].text.strip()
+            change_match = re.search(r'[+-]\d+', change_text)
+            if change_match:
+                change = change_match.group(0)
+
+        return [rank, name, age, country, points, change]
+
     except Exception as e:
-        print(f"Error fetching rankings: {e}")
+        print(f"Error extracting player data: {e}")
         return None
 
 
-def parse_rankings(html_content):
-    """Parse the HTML content to extract ranking data"""
-    if not html_content:
-        return []
+def save_to_csv(data, folder='atp_rankings_data'):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+    filename = f"{folder}/atp_rankings_{datetime.now().strftime('%Y-%m-%d')}.csv"
+
+    with open(filename, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Rank", "Player Name", "Age",
+                        "Country", "Points", "Change"])
+        writer.writerows(data)
+
+    print(f"Data saved to {filename}")
+    return filename
+
+
+def extract_rankings():
+    url = 'https://live-tennis.eu/en/atp-live-ranking'
+    driver = None
 
     try:
-        soup = BeautifulSoup(html_content, 'html.parser')
-        table = soup.find('table', {'class': 'restable'})
+        print("Initializing Chrome...")
+        driver = setup_driver()
 
-        if not table:
-            print("Could not find ranking table")
-            return []
+        print(f"Navigating to {url}...")
+        driver.get(url)
 
-        rows = table.find_all('tr')
-        print(f"Found {len(rows)} rows in the table")
+        print("Waiting for page load...")
+        WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "table tbody tr")))
+
+        print("Finding ranking rows...")
+        rows = driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
+
+        print(f"Found {len(rows)} potential rows")
 
         data = []
+        found_first_valid = False
+        consecutive_invalid = 0
+        max_consecutive_invalid = 10  # Stop if we find too many invalid rows after valid ones
+
         for row in rows:
-            cells = row.find_all('td')
-            if len(cells) < 7:
-                continue
+            player_data = extract_player_data(row)
 
-            try:
-                # Extract rank (first column)
-                rank = cells[0].text.strip()
-                if not rank.isdigit():
-                    continue
-
-                # Extract name (fourth column)
-                name = cells[3].text.strip()
-                if len(name.split()) < 2:
-                    continue
-
-                # Extract age
-                age = cells[4].text.strip()
-                if not age.isdigit():
-                    continue
-
-                # Extract country
-                country = cells[5].text.strip()
-                if not (len(country) == 3 and country.isalpha() and country.isupper()):
-                    continue
-
-                # Extract points
-                points = cells[6].text.strip()
-                if not points.replace(",", "").replace(".", "").isdigit():
-                    continue
-
-                # Extract change if available
-                change = ""
-                if len(cells) > 7:
-                    change_text = cells[7].text.strip()
-                    change_match = re.search(r'[+-]\d+', change_text)
-                    if change_match:
-                        change = change_match.group(0)
-
-                data.append([rank, name, age, country, points, change])
-            except Exception as e:
-                print(f"Error parsing row: {e}")
-                continue
+            if player_data:
+                found_first_valid = True
+                consecutive_invalid = 0
+                data.append(player_data)
+            elif found_first_valid:
+                consecutive_invalid += 1
+                if consecutive_invalid > max_consecutive_invalid:
+                    break
 
         # Sort by rank to ensure proper ordering
-        if data:
-            data.sort(key=lambda x: int(x[0]))
+        data.sort(key=lambda x: int(x[0]))
 
         return data
 
     except Exception as e:
-        print(f"Error parsing HTML: {e}")
+        print(f"Error during scraping: {e}")
+        if driver:
+            print("Current URL:", driver.current_url)
         return []
 
+    finally:
+        if driver:
+            driver.quit()
 
-def save_to_csv(data, filename='atp_rankings.csv'):
-    """Save ranking data directly to the main CSV file"""
-    if not data:
-        print("No data to save")
-        return None
+
+def update_main_rankings_file(new_data_file):
+    original_file = "atp_rankings.csv"
+
+    # Read old data if it exists
+    if os.path.exists(original_file):
+        df_old = pd.read_csv(original_file)
+    else:
+        df_old = None
+
+    # Read new data
+    df_new = pd.read_csv(new_data_file)
+
+    # Compare old and new data
+    if df_old is not None and df_old.equals(df_new):
+        print("No changes in rankings, skipping update.")
+        return original_file  # Exit without updating
+
+    # Backup old data before overwriting
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    backup_file = f"atp_rankings_{date_str}.csv"
+
+    if os.path.exists(original_file):
+        shutil.copy(original_file, backup_file)
+        print(f"Backup created as {backup_file}")
+
+    # Overwrite with new data
+    df_new.to_csv(original_file, index=False)
+
+    # Record update time
+    with open("last_updated.txt", "w") as f:
+        f.write(datetime.now().strftime("%Y-%m-%d"))
+
+    print(f"Rankings updated in {original_file}!")
+    return original_file
+
+
+def commit_to_git():
+    repo_dir = '/Users/alexbieth/Documents/dev/atp'
+    os.chdir(repo_dir)
 
     try:
-        # Create a backup of the existing file if it exists
-        if os.path.exists(filename):
-            backup_name = f"atp_rankings_backup_{datetime.now().strftime('%Y%m%d%H%M%S')}.csv"
-            os.rename(filename, backup_name)
-            print(f"Created backup: {backup_name}")
+        # Check if there are changes
+        subprocess.run(["git", "status"], check=True)
+        subprocess.run(["git", "diff", "--stat"],
+                       check=True)  # Debug differences
 
-        # Save the new data
-        with open(filename, mode='w', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerow(["Rank", "Player Name", "Age",
-                            "Country", "Points", "Change"])
-            writer.writerows(data)
+        # Add changes
+        subprocess.run(["git", "add", "."], check=True)
 
-        print(f"Data saved to {filename} with {len(data)} entries")
+        # Commit only if there are changes
+        commit_message = f"Add ATP rankings data for {datetime.now().strftime('%Y-%m-%d')}"
+        commit_result = subprocess.run(
+            ["git", "commit", "-m", commit_message], capture_output=True, text=True
+        )
 
-        # Also save a date-stamped version for record-keeping
-        dated_filename = f"atp_rankings_data/atp_rankings_{datetime.now().strftime('%Y-%m-%d')}.csv"
-        os.makedirs(os.path.dirname(dated_filename), exist_ok=True)
+        if "nothing to commit" in commit_result.stdout.lower():
+            print("No changes detected. Skipping push.")
+        else:
+            # Push only if commit was successful
+            subprocess.run(["git", "push", "origin", "main"], check=True)
+            print("Changes pushed to GitHub.")
 
-        with open(dated_filename, mode='w', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerow(["Rank", "Player Name", "Age",
-                            "Country", "Points", "Change"])
-            writer.writerows(data)
-
-        print(f"Data also saved to {dated_filename}")
-
-        # Update the last updated timestamp
-        with open("last_updated.txt", "w") as f:
-            f.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
-        return filename
-
-    except Exception as e:
-        print(f"Error saving data: {e}")
-        return None
-
-
-def commit_and_push():
-    """Commit and push changes to GitHub"""
-    try:
-        # Check current status
-        status_output = subprocess.check_output(
-            ["git", "status", "--porcelain"], text=True)
-
-        if not status_output.strip():
-            print("No changes detected by git status")
-
-            # Force an update to last_updated.txt to ensure we have something to commit
-            with open("last_updated.txt", "w") as f:
-                f.write(
-                    f"Force update at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-
-            print("Created forced update to last_updated.txt")
-
-        # Stage all changes
-        subprocess.run(["git", "add", "-A"], check=True)
-        print("Git add completed")
-
-        # Commit with timestamp
-        commit_message = f"ATP rankings update {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-        subprocess.run(["git", "commit", "-m", commit_message], check=True)
-        print(f"Committed with message: {commit_message}")
-
-        # Push to remote
-        subprocess.run(["git", "push"], check=True)
-        print("Successfully pushed to repository")
-
-        return True
-    except Exception as e:
-        print(f"Error in git operations: {e}")
-        return False
+    except subprocess.CalledProcessError as e:
+        print(f"Git command failed: {e}")
 
 
 def main():
-    print(f"Starting ATP rankings update at {datetime.now()}")
+    print("Starting ATP rankings extraction...")
+    max_attempts = 3
 
-    # Make sure the output directory exists
-    os.makedirs("atp_rankings_data", exist_ok=True)
+    for attempt in range(max_attempts):
+        print(f"\nAttempt {attempt + 1} of {max_attempts}")
+        data = extract_rankings()
 
-    # Fetch and parse rankings
-    html_content = fetch_rankings()
-    if not html_content:
-        print("Failed to fetch rankings")
-        return False
+        if data:
+            # Save the data to a date-specific file and get the filename
+            new_data_file = save_to_csv(data)
 
-    ranking_data = parse_rankings(html_content)
-    if not ranking_data:
-        print("Failed to parse rankings")
-        return False
+            # Update the main rankings file
+            update_main_rankings_file(new_data_file)
 
-    print(f"Successfully extracted {len(ranking_data)} player rankings")
+            print(f"Successfully extracted {len(data)} player rankings.")
+            # Print first few entries to verify format
+            print("\nFirst few entries:")
+            for entry in data[:5]:
+                print(entry)
 
-    # Print sample data for verification
-    print("\nSample ranking data:")
-    for entry in ranking_data[:5]:
-        print(entry)
-
-    # Save the data
-    saved_file = save_to_csv(ranking_data)
-    if not saved_file:
-        print("Failed to save rankings")
-        return False
-
-    # Commit and push changes
-    if commit_and_push():
-        print("Rankings successfully updated and pushed to repository")
-        return True
+            # Commit changes to Git
+            commit_to_git()
+            break
+        else:
+            print(f"No data extracted on attempt {attempt + 1}")
+            if attempt < max_attempts - 1:
+                wait_time = 10 * (attempt + 1)
+                print(f"Waiting {wait_time} seconds before retry...")
+                time.sleep(wait_time)
     else:
-        print("Failed to commit and push changes")
-        return False
+        print("Failed to extract data after all attempts.")
 
 
 if __name__ == "__main__":
-    success = main()
-    print(f"Script completed with success={success}")
-
-    # Exit with appropriate status code
-    exit(0 if success else 1)
+    main()

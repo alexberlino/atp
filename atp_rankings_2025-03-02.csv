@@ -7,44 +7,44 @@ Rank,Player Name,Age,Country,Points,Change
 6,Daniil Medvedev,29,RUS,3930,
 7,Novak Djoković,37,SRB,3900,
 8,Andrey Rublev,27,RUS,3480,1.0
-9,Stefanos Tsitsipas,26,GRE,3405,2.0
-10,Alex de Minaur,26,AUS,3335,-2.0
-11,Tommy Paul,27,USA,3330,-1.0
+9,Alex de Minaur,26,AUS,3335,-1.0
+10,Tommy Paul,27,USA,3330,
+11,Stefanos Tsitsipas,26,GRE,3105,
 12,Ben Shelton,22,USA,2880,2.0
 13,Holger Rune,21,DEN,2820,
 14,Jack Draper,23,GBR,2810,-2.0
 15,Grigor Dimitrov,33,BUL,2745,1.0
 16,Lorenzo Musetti,22,ITA,2650,1.0
 17,Frances Tiafoe,27,USA,2485,1.0
-18,Félix Auger-Aliassime,24,CAN,2455,3.0
-19,Ugo Humbert,26,FRA,2375,-4.0
-20,Tomáš Macháč,24,CZE,2330,5.0
-21,Arthur Fils,20,FRA,2330,-2.0
-22,Hubert Hurkacz,28,POL,2165,-2.0
+18,Ugo Humbert,26,FRA,2375,-3.0
+19,Arthur Fils,20,FRA,2330,
+20,Félix Auger-Aliassime,24,CAN,2325,1.0
+21,Hubert Hurkacz,28,POL,2165,-1.0
+22,Tomáš Macháč,24,CZE,2030,3.0
 23,Karen Khachanov,28,RUS,1960,1.0
 24,Jiří Lehečka,23,CZE,1935,-2.0
 25,Sebastian Korda,24,USA,1900,-2.0
-26,Francisco Cerúndolo,26,ARG,1775,
-27,Alexei Popyrin,25,AUS,1750,
+26,Alexei Popyrin,25,AUS,1750,1.0
+27,Francisco Cerúndolo,26,ARG,1725,-1.0
 28,Denis Shapovalov,25,CAN,1696,4.0
 29,Matteo Berrettini,28,ITA,1620,1.0
 30,Giovanni Mpetshi Perricard,21,FRA,1616,-1.0
 31,Alejandro Tabilo,27,CHI,1535,-3.0
 32,Alex Michelsen,20,USA,1445,2.0
 33,Brandon Nakashima,23,USA,1430,9.0
-34,Sebastián Báez,24,ARG,1425,-3.0
-35,Matteo Arnaldi,24,ITA,1390,-2.0
-36,Nuno Borges,28,POR,1385,2.0
-37,Lorenzo Sonego,29,ITA,1376,-2.0
-38,Jordan Thompson,30,AUS,1375,-1.0
-39,Alejandro Davidovich Fokina,25,ESP,1325,9.0
-40,Flavio Cobolli,22,ITA,1295,-1.0
-41,Pedro Martínez,27,ESP,1295,-5.0
-42,Gaël Monfils,38,FRA,1280,-2.0
-43,Tallon Griekspoor,28,NED,1270,4.0
-44,Alexandre Müller,28,FRA,1270,-3.0
-45,Tomás Martín Etcheverry,25,ARG,1265,-2.0
-46,Jan Lennard Struff,34,GER,1200,
+34,Matteo Arnaldi,24,ITA,1390,-1.0
+35,Nuno Borges,28,POR,1385,3.0
+36,Lorenzo Sonego,29,ITA,1376,-1.0
+37,Jordan Thompson,30,AUS,1375,
+38,Sebastián Báez,24,ARG,1310,-7.0
+39,Flavio Cobolli,22,ITA,1295,
+40,Pedro Martínez,27,ESP,1295,-4.0
+41,Gaël Monfils,38,FRA,1280,-1.0
+42,Tallon Griekspoor,28,NED,1270,5.0
+43,Alexandre Müller,28,FRA,1270,-2.0
+44,Tomás Martín Etcheverry,25,ARG,1265,-1.0
+45,Jan Lennard Struff,34,GER,1200,1.0
+46,Alejandro Davidovich Fokina,25,ESP,1195,2.0
 47,Nicolás Jarry,29,CHI,1175,-2.0
 48,Marcos Giron,31,USA,1150,4.0
 49,Miomir Kecmanović,25,SRB,1146,-5.0
@@ -59,9 +59,9 @@ Rank,Player Name,Age,Country,Points,Change
 58,Jaume Munar,27,ESP,992,-1.0
 59,Quentin Halys,28,FRA,976,18.0
 60,Luciano Darderi,23,ITA,945,-1.0
-61,Camilo Ugo Carabelli,25,ARG,935,8.0
-62,Benjamin Bonzi,28,FRA,910,
-63,Mariano Navone,24,ARG,905,1.0
+61,Benjamin Bonzi,28,FRA,910,1.0
+62,Mariano Navone,24,ARG,905,2.0
+63,Camilo Ugo Carabelli,25,ARG,885,6.0
 64,Aleksandar Vukic,28,AUS,868,2.0
 65,Yoshihito Nishioka,29,JPN,866,-5.0
 66,Francisco Comesaña,24,ARG,866,1.0
@@ -81,22 +81,22 @@ Rank,Player Name,Age,Country,Points,Change
 80,Jacob Fearnley,23,GBR,747,1.0
 81,Alexander Bublik,27,KAZ,745,-30.0
 82,Rinky Hijikata,24,AUS,732,
-83,Laslo Djere,29,SRB,728,20.0
-84,Damir Džumhur,32,BIH,712,6.0
-85,Botic van de Zandschulp,29,NED,710,-5.0
-86,Thanasi Kokkinakis,28,AUS,703,-2.0
-87,Jaime Faria,21,POR,699,
-88,Gabriel Diallo,23,CAN,690,1.0
-89,Márton Fucsovics,33,HUN,666,-1.0
-90,Francesco Passaro,24,ITA,658,1.0
-91,Thiago Seyboth Wild,24,BRA,657,-5.0
-92,Raphaël Collignon,23,BEL,652,6.0
-93,Hugo Gaston,24,FRA,636,-1.0
-94,Aleksandar Kovačević,26,USA,630,-9.0
-95,Fabio Fognini,37,ITA,629,-2.0
-96,Adam Walton,25,AUS,629,1.0
-97,James Duckworth,33,AUS,628,-3.0
-98,Alexander Shevchenko,24,KAZ,618,-3.0
+83,Damir Džumhur,32,BIH,712,7.0
+84,Botic van de Zandschulp,29,NED,710,-4.0
+85,Thanasi Kokkinakis,28,AUS,703,-1.0
+86,Jaime Faria,21,POR,699,1.0
+87,Gabriel Diallo,23,CAN,690,2.0
+88,Márton Fucsovics,33,HUN,666,
+89,Francesco Passaro,24,ITA,658,2.0
+90,Thiago Seyboth Wild,24,BRA,657,-4.0
+91,Hugo Gaston,24,FRA,636,1.0
+92,Aleksandar Kovačević,26,USA,630,-7.0
+93,Fabio Fognini,37,ITA,629,
+94,Adam Walton,25,AUS,629,3.0
+95,James Duckworth,33,AUS,628,-1.0
+96,Raphaël Collignon,23,BEL,620,2.0
+97,Alexander Shevchenko,24,KAZ,618,-2.0
+98,Laslo Djere,29,SRB,613,5.0
 99,Lucas Pouille,31,FRA,609,-3.0
 100,Chun Hsin Tseng,23,TWN,605,-1.0
 101,Nishesh Basavareddy,19,USA,587,5.0
@@ -105,78 +105,78 @@ Rank,Player Name,Age,Country,Points,Change
 104,Christopher Eubanks,28,USA,567,
 105,Thiago Monteiro,30,BRA,562,3.0
 106,Jesper de Jong,24,NED,562,-1.0
-107,Billy Harris,30,GBR,558,3.0
-108,Dušan Lajović,34,SRB,555,-8.0
-109,Yannick Hanfmann,33,GER,553,
-110,Mackenzie McDonald,29,USA,545,7.0
-111,Brandon Holt,26,USA,528,33.0
-112,Pablo Carreño Busta,33,ESP,524,
-113,Arthur Cazaux,22,FRA,521,-12.0
-114,Reilly Opelka,27,USA,516,
-115,Otto Virtanen,23,FIN,515,-4.0
-116,Taro Daniel,32,JPN,508,3.0
-117,Tristan Boyer,23,USA,501,-4.0
-118,Nicolas Moreno De Alboran,27,USA,501,2.0
-119,Vít Kopřiva,27,CZE,491,2.0
-120,Borna Ćorić,28,CRO,485,23.0
-121,Alexander Ritschard,30,SUI,480,1.0
-122,Kamil Majchrzak,29,POL,479,-4.0
-123,Daniel Elahi Galán,28,COL,468,2.0
-124,Max Purcell,26,AUS,466,2.0
-125,Jozef Kovalík,32,SVK,466,-1.0
-126,Adrian Mannarino,36,FRA,461,1.0
-127,Sebastian Ofner,28,AUT,458,-11.0
-128,Federico Coria,32,ARG,458,8.0
-129,Juan Manuel Cerúndolo,23,ARG,451,-6.0
-130,Tristan Schoolkate,24,AUS,450,3.0
-131,Jérôme Kym,22,SUI,449,-2.0
-132,Sumit Nagal,27,IND,448,-1.0
-133,Harold Mayot,23,FRA,448,-1.0
-134,Thiago Agustín Tirante,23,ARG,443,-6.0
-135,Federico Agustin Gomez,28,ARG,442,
-136,Román Andrés Burruchaga,23,ARG,436,-2.0
-137,Ethan Quinn,20,USA,432,5.0
-138,Cristian Garín,28,CHI,427,9.0
-139,Facundo Díaz Acosta,24,ARG,423,-9.0
-140,Mitchell Krueger,31,USA,422,-2.0
+107,Dušan Lajović,34,SRB,555,-7.0
+108,Yannick Hanfmann,33,GER,553,1.0
+109,Billy Harris,30,GBR,539,1.0
+110,Pablo Carreño Busta,33,ESP,524,2.0
+111,Arthur Cazaux,22,FRA,521,-10.0
+112,Reilly Opelka,27,USA,516,2.0
+113,Otto Virtanen,23,FIN,515,-2.0
+114,Mackenzie McDonald,29,USA,509,3.0
+115,Taro Daniel,32,JPN,508,4.0
+116,Tristan Boyer,23,USA,501,-3.0
+117,Nicolas Moreno De Alboran,27,USA,501,3.0
+118,Vít Kopřiva,27,CZE,491,3.0
+119,Alexander Ritschard,30,SUI,480,3.0
+120,Daniel Elahi Galán,28,COL,468,5.0
+121,Kamil Majchrzak,29,POL,468,-3.0
+122,Max Purcell,26,AUS,466,4.0
+123,Jozef Kovalík,32,SVK,466,1.0
+124,Adrian Mannarino,36,FRA,461,3.0
+125,Sebastian Ofner,28,AUT,458,-9.0
+126,Federico Coria,32,ARG,458,10.0
+127,Juan Manuel Cerúndolo,23,ARG,451,-4.0
+128,Tristan Schoolkate,24,AUS,450,5.0
+129,Jérôme Kym,22,SUI,449,
+130,Sumit Nagal,27,IND,448,1.0
+131,Harold Mayot,23,FRA,448,1.0
+132,Thiago Agustín Tirante,23,ARG,443,-4.0
+133,Federico Agustin Gomez,28,ARG,442,2.0
+134,Román Andrés Burruchaga,23,ARG,436,
+135,Cristian Garín,28,CHI,427,12.0
+136,Facundo Díaz Acosta,24,ARG,423,-6.0
+137,Borna Ćorić,28,CRO,422,6.0
+138,Mitchell Krueger,31,USA,422,
+139,Ethan Quinn,20,USA,421,3.0
+140,Brandon Holt,26,USA,419,4.0
 141,Lloyd Harris,28,RSA,416,
 142,Marin Čilić,36,CRO,413,45.0
 143,Martin Landaluce,19,ESP,411,-6.0
 144,Dominik Koepfer,30,GER,408,-29.0
-145,Shintaro Mochizuki,21,JPN,404,22.0
-146,Lukáš Klein,26,SVK,400,2.0
-147,Richard Gasquet,38,FRA,398,-1.0
-148,Marco Trungelliti,35,ARG,398,-8.0
-149,Gustavo Heide,23,BRA,397,11.0
-150,Valentin Royer,23,FRA,387,33.0
-151,Nikoloz Basilashvili,33,GEO,383,-1.0
-152,Tomás Barrios Vera,27,CHI,382,-7.0
-153,Kyrian Jacquet,23,FRA,376,-1.0
-154,Alejandro Moro Cañas,24,ESP,375,-5.0
-155,Alexander Blockx,19,BEL,374,-2.0
-156,Luca Van Assche,20,FRA,371,-2.0
-157,Elmer Møller,21,DEN,370,-2.0
-158,Grégoire Barrère,31,FRA,367,-7.0
-159,Yasutaka Uchiyama,32,JPN,365,-3.0
-160,Eliot Spizzirri,23,USA,361,29.0
-161,Ugo Blanchet,26,FRA,360,-3.0
-162,Henrique Rocha,20,POR,360,-3.0
-163,Alexis Galarneau,26,CAN,356,-1.0
-164,Dalibor Svrčina,22,CZE,351,-3.0
-165,Stan Wawrinka,39,SUI,349,-2.0
-166,Mikhail Kukushkin,37,KAZ,349,-27.0
-167,Duje Ajduković,24,CRO,345,-2.0
-168,Terence Atmane,23,FRA,342,-11.0
-169,Juan Pablo Ficovich,28,ARG,337,6.0
-170,Hady Habib,26,LBN,336,-2.0
-171,Liam Draxl,23,CAN,335,5.0
-172,Marc-Andrea Hüsler,28,SUI,334,
-173,Henri Squire,24,GER,332,4.0
-174,Carlos Taberner,27,ESP,332,
-175,Calvin Hémery,30,FRA,331,-4.0
-176,Rafael Nadal,38,ESP,330,-3.0
-177,Constant Lestienne,32,FRA,330,-8.0
-178,Li Tu,28,AUS,326,-8.0
+145,Lukáš Klein,26,SVK,400,3.0
+146,Richard Gasquet,38,FRA,398,
+147,Marco Trungelliti,35,ARG,398,-7.0
+148,Gustavo Heide,23,BRA,397,12.0
+149,Nikoloz Basilashvili,33,GEO,383,1.0
+150,Tomás Barrios Vera,27,CHI,382,-5.0
+151,Kyrian Jacquet,23,FRA,376,1.0
+152,Alejandro Moro Cañas,24,ESP,375,-3.0
+153,Alexander Blockx,19,BEL,374,
+154,Luca Van Assche,20,FRA,371,
+155,Elmer Møller,21,DEN,370,
+156,Grégoire Barrère,31,FRA,367,-5.0
+157,Yasutaka Uchiyama,32,JPN,365,-1.0
+158,Ugo Blanchet,26,FRA,360,
+159,Henrique Rocha,20,POR,360,
+160,Shintaro Mochizuki,21,JPN,356,7.0
+161,Alexis Galarneau,25,CAN,356,1.0
+162,Dalibor Svrčina,22,CZE,351,-1.0
+163,Stan Wawrinka,39,SUI,349,
+164,Mikhail Kukushkin,37,KAZ,349,-25.0
+165,Duje Ajduković,24,CRO,345,
+166,Terence Atmane,23,FRA,342,-9.0
+167,Juan Pablo Ficovich,28,ARG,337,8.0
+168,Hady Habib,26,LBN,336,
+169,Liam Draxl,23,CAN,335,7.0
+170,Marc-Andrea Hüsler,28,SUI,334,2.0
+171,Valentin Royer,23,FRA,334,12.0
+172,Henri Squire,24,GER,332,5.0
+173,Carlos Taberner,27,ESP,332,1.0
+174,Calvin Hémery,30,FRA,331,-3.0
+175,Rafael Nadal,38,ESP,330,-2.0
+176,Constant Lestienne,32,FRA,330,-7.0
+177,Li Tu,28,AUS,326,-7.0
+178,Eliot Spizzirri,23,USA,325,11.0
 179,Daniel Evans,34,GBR,321,-1.0
 180,Felipe Meligeni Alves,27,BRA,320,14.0
 181,Pierre Hugues Herbert,33,FRA,320,-17.0
@@ -218,16 +218,16 @@ Rank,Player Name,Age,Country,Points,Change
 217,Bernard Tomic,32,AUS,258,3.0
 218,Matteo Gigante,23,ITA,256,-17.0
 219,Khumoyun Sultanov,26,UZB,254,2.0
-220,Murphy Cassone,22,USA,252,28.0
-221,Dmitry Popko,28,KAZ,251,-14.0
-222,Emil Ruusuvuori,25,FIN,250,6.0
-223,Filip Jianu,23,ROU,250,6.0
-224,Maks Kaśnikowski,21,POL,249,
-225,Albert Ramos Viñolas,37,ESP,249,-19.0
-226,Arthur Bouquier,24,FRA,247,-3.0
-227,Yu-hsiou Hsu,25,TWN,246,-2.0
-228,Ignacio Buse,20,PER,245,-1.0
-229,Rio Noguchi,26,JPN,245,4.0
+220,Dmitry Popko,28,KAZ,251,-13.0
+221,Emil Ruusuvuori,25,FIN,250,7.0
+222,Filip Jianu,23,ROU,250,7.0
+223,Maks Kaśnikowski,21,POL,249,1.0
+224,Albert Ramos Viñolas,37,ESP,249,-18.0
+225,Arthur Bouquier,24,FRA,247,-2.0
+226,Yu-hsiou Hsu,25,TWN,246,-1.0
+227,Ignacio Buse,20,PER,245,
+228,Rio Noguchi,26,JPN,245,5.0
+229,Murphy Cassone,22,USA,242,19.0
 230,Nick Hardt,24,DOM,240,
 231,Daniel Rincon,22,ESP,240,
 232,Rodrigo Pacheco Mendez,19,MEX,240,124.0
@@ -241,7 +241,7 @@ Rank,Player Name,Age,Country,Points,Change
 240,J.J. Wolf,26,USA,231,1.0
 241,Clément Chidekh,23,FRA,231,1.0
 242,Viktor Durasovic,27,NOR,231,-4.0
-243,Enzo Couacaud,30,FRA,229,3.0
+243,Enzo Couacaud,29,FRA,229,3.0
 244,Max Hans Rehberg,21,GER,229,3.0
 245,Marek Gengel,29,CZE,228,6.0
 246,Gonzalo Oliveira,30,VEN,225,-3.0
@@ -327,50 +327,50 @@ Rank,Player Name,Age,Country,Points,Change
 326,Genaro Alberto Olivieri,26,ARG,158,4.0
 327,Eliakim Coulibaly,22,CIV,157,11.0
 328,Kimmer Coppejans,31,BEL,156,5.0
-329,Andrej Martin,35,SVK,156,99.0
-330,Maxime Chazal,31,FRA,156,-1.0
-331,Corentin Denolly,27,FRA,156,-7.0
-332,Masamichi Imamura,26,JPN,155,2.0
-333,Daniel Masur,30,GER,154,-38.0
-334,Christian Langmo,28,USA,154,2.0
-335,Daniel Michalski,25,POL,153,4.0
-336,Cezar Crețu,23,ROU,152,-4.0
-337,Mats Rosenkranz,26,GER,151,3.0
-338,Alex Martí Pujolras,26,ESP,151,7.0
-339,Pedro Sakamoto,31,BRA,151,2.0
-340,Daniel Mérida,20,ESP,150,-17.0
-341,Adria Soriano Barrera,25,COL,150,9.0
-342,Clément Tabur,25,FRA,150,
-343,Diego Schwartzman,32,ARG,149,1.0
-344,Jakub Paul,25,SUI,149,-1.0
-345,Dino Prižmić,19,CRO,147,49.0
-346,Philip Henning,24,RSA,147,-20.0
-347,Luka Pavlovic,24,FRA,147,17.0
-348,Nikolás Sánchez Izquierdo,25,ESP,146,-2.0
-349,Renzo Olivo,32,ARG,145,16.0
-350,Yosuke Watanuki,26,JPN,144,-3.0
-351,Justin Engel,17,GER,144,-3.0
-352,Philip Sekulic,21,AUS,144,-25.0
-353,Jiří Veselý,31,CZE,144,-4.0
-354,Patrick Kypson,25,USA,143,-3.0
-355,Lautaro Midon,20,ARG,143,-3.0
-356,Andrea Picchione,26,ITA,143,-3.0
-357,Jack Pinnington Jones,21,GBR,142,-2.0
-358,Sandro Kopp,24,AUT,142,-27.0
-359,Matheus Pucinelli De Almeida,23,BRA,142,-1.0
-360,Naoki Nakagawa,28,JPN,141,-3.0
-361,Petr Bar Biryukov,23,RUS,141,34.0
-362,Toby Kodat,22,USA,141,-8.0
-363,Denis Kudla,32,USA,140,-4.0
-364,Stefan Kozlov,27,USA,139,-4.0
-365,Hynek Bartoň,20,CZE,139,38.0
-366,Rei Sakamoto,18,JPN,138,6.0
-367,Dennis Novak,31,AUT,138,4.0
-368,Jelle Sels,29,NED,138,-33.0
-369,Kris Van Wyk,28,RSA,138,-6.0
-370,Marc Polmans,27,AUS,136,-4.0
-371,Kaichi Uchida,30,JPN,136,-4.0
-372,Soonwoo Kwon,27,KOR,135,-2.0
+329,Maxime Chazal,31,FRA,156,
+330,Corentin Denolly,27,FRA,156,-6.0
+331,Masamichi Imamura,26,JPN,155,3.0
+332,Daniel Masur,30,GER,154,-37.0
+333,Christian Langmo,28,USA,154,3.0
+334,Daniel Michalski,25,POL,153,5.0
+335,Cezar Crețu,23,ROU,152,-3.0
+336,Mats Rosenkranz,26,GER,151,4.0
+337,Alex Martí Pujolras,26,ESP,151,8.0
+338,Pedro Sakamoto,31,BRA,151,3.0
+339,Daniel Mérida,20,ESP,150,-16.0
+340,Adria Soriano Barrera,25,COL,150,10.0
+341,Clément Tabur,25,FRA,150,1.0
+342,Diego Schwartzman,32,ARG,149,2.0
+343,Jakub Paul,25,SUI,149,
+344,Philip Henning,24,RSA,147,-18.0
+345,Luka Pavlovic,24,FRA,147,19.0
+346,Nikolás Sánchez Izquierdo,25,ESP,146,
+347,Renzo Olivo,32,ARG,145,18.0
+348,Yosuke Watanuki,26,JPN,144,-1.0
+349,Justin Engel,17,GER,144,-1.0
+350,Philip Sekulic,21,AUS,144,-23.0
+351,Jiří Veselý,31,CZE,144,-2.0
+352,Patrick Kypson,25,USA,143,-1.0
+353,Lautaro Midon,20,ARG,143,-1.0
+354,Andrea Picchione,26,ITA,143,-1.0
+355,Jack Pinnington Jones,21,GBR,142,
+356,Sandro Kopp,24,AUT,142,-25.0
+357,Matheus Pucinelli De Almeida,23,BRA,142,1.0
+358,Naoki Nakagawa,28,JPN,141,-1.0
+359,Petr Bar Biryukov,23,RUS,141,36.0
+360,Toby Kodat,22,USA,141,-6.0
+361,Denis Kudla,32,USA,140,-2.0
+362,Stefan Kozlov,27,USA,139,-2.0
+363,Hynek Bartoň,20,CZE,139,40.0
+364,Rei Sakamoto,18,JPN,138,8.0
+365,Dennis Novak,31,AUT,138,6.0
+366,Jelle Sels,29,NED,138,-31.0
+367,Kris Van Wyk,28,RSA,138,-4.0
+368,Dino Prižmić,19,CRO,137,26.0
+369,Marc Polmans,27,AUS,136,-3.0
+370,Kaichi Uchida,30,JPN,136,-3.0
+371,Soonwoo Kwon,27,KOR,135,-1.0
+372,Andrej Martin,35,SVK,134,56.0
 373,Franco Roncadelli,25,URU,134,1.0
 374,Yi Zhou,19,CHN,133,1.0
 375,Giles Hussey,27,GBR,133,-2.0
