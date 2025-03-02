@@ -1,4 +1,4 @@
-name: Daily ATP Rankings Update
+name: Daily ATP Rankings Update (Debug)
 
 on:
   schedule:
@@ -16,8 +16,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Get all history to ensure proper git operations
+          fetch-depth: 0  # Full history
 
+      - name: Setup Debug Info
+        run: |
+          echo "GitHub Actions Workspace: $GITHUB_WORKSPACE"
+          echo "Current directory: $(pwd)"
+          echo "Directory contents: $(ls -la)"
+          whoami
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -25,34 +32,79 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.name "GitHub Actions"
+          git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
+          echo "Git configuration:"
+          git config --list
+
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          echo "Chrome version: $(google-chrome --version)"
+
+      - name: Install chromedriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d. -f1)
+          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+          wget -q "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          sudo chmod +x /usr/local/bin/chromedriver
+          echo "Chromedriver version: $(chromedriver --version)"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4 pandas
+          pip install -r requirements.txt
+          echo "Installed Python packages:"
+          pip list
 
-      - name: Create output directories
+      - name: Run ranking update script with debug
+        env:
+          HEADLESS: "true"
+          PYTHONUNBUFFERED: "1"
         run: |
-          mkdir -p atp_rankings_data
-
-      - name: Run ranking update script
-        run: |
-          echo "Running ranking script..."
+          echo "Starting ATP rankings update script..."
+          # Create a debug file to verify file writing works
+          echo "Debug test" > debug_test.txt
           python ranking.py
-          
-      - name: Display git status for debugging
-        run: |
+          echo "Script completed"
+          echo "Directory contents after script:"
+          ls -la
+          echo "Git status:"
           git status
-          echo "Changes in files:"
-          git diff --stat
 
-      - name: Force commit and push changes
+      - name: Force change creation
         run: |
-          # Always create a commit by updating the timestamp file
-          echo "Last checked: $(date)" > last_check.txt
+          # Always create a file change
+          echo "ATP Rankings last checked at $(date)" > ranking_last_check.txt
+          echo "Created forced change file"
+          echo "Git status after force change:"
+          git status
+
+      - name: Commit changes
+        run: |
           git add -A
-          git commit -m "ATP rankings update for $(date +'%Y-%m-%d')"
-          git push
-          echo "Changes pushed successfully!"
+          git status
+          git commit -m "ATP rankings update $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          echo "Git status after commit:"
+          git status
+
+      - name: Push changes
+        run: |
+          echo "Attempting to push changes..."
+          git push origin || echo "Push failed, will try pull and push"
+          
+          # If push fails, try pulling first
+          if [ $? -ne 0 ]; then
+            echo "Pull before push..."
+            git pull --rebase origin main
+            git push origin
+          fi
+          
+          echo "Push attempt completed"
