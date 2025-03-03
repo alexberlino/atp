@@ -53,16 +53,16 @@ jobs:
           # Add export for headless mode
           export HEADLESS=true
           python ranking.py
-          
-      - name: Force update timestamp
-        run: |
-          # Create a timestamp file to ensure we have a change to commit
-          echo "Last ranking check: $(date)" > last_check_timestamp.txt
         
-      - name: Commit and push changes
+      # NEW STEP: Force a file change to ensure there's something to commit
+      - name: Create timestamp file
         run: |
-          # Always add all changes including the timestamp file
+          echo "ATP Rankings last checked: $(date)" > last_check.txt
+
+      - name: Commit and push changes if any
+        run: |
+          # This will now always have at least the timestamp file to commit
           git add -A
-          git commit -m "ATP rankings update for $(date +'%Y-%m-%d')"
+          git commit -m "Automated ATP rankings update for $(date +'%Y-%m-%d')"
           git push
           echo "Changes pushed successfully!"
