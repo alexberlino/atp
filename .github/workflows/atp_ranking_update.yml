@@ -55,9 +55,9 @@ jobs:
       - name: Create timestamp file
         run: echo "ATP Rankings last checked: $(date)" > last_check.txt
 
-      - name: Commit and push changes if any
-        run: |
-          git pull --rebase origin main  # Pull latest changes before pushing
-          git add -A
-          git commit -m "Automated ATP rankings update for $(date +'%Y-%m-%d')" || echo "No changes to commit"
-          git push
+        - name: Commit and push changes if any
+    run: |
+      git pull --rebase origin main  # Pull latest changes before pushing
+      git add -A
+      git commit -m "Automated ATP rankings update for $(date +'%Y-%m-%d')" || echo "No changes to commit"
+      git push
