@@ -28,33 +28,38 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Cache Python dependencies
-        uses: actions/cache@v3
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-python-${{ hashFiles('requirements.txt') }}-v3
-          restore-keys: |
-            ${{ runner.os }}-python-
+          chrome-version: stable
+
+      - name: Setup ChromeDriver
+        uses: nanasess/setup-chromedriver@v2
 
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser
           pip install undetected-chromedriver selenium pandas
+
+      - name: Start Chrome
+        run: |
+          # Start Chrome in the background with debugging port
+          google-chrome --version
+          chromedriver --version
+          # Start ChromeDriver
+          chromedriver --port=9515 &
+          sleep 3  # Give ChromeDriver time to start
 
       - name: Run ranking update script
         env:
-          # Add environment variables that might be needed for headless Chrome
           PYTHONUNBUFFERED: 1
-          DISPLAY: :99
+          HEADLESS: true
+          CHROME_BIN: /usr/bin/google-chrome
         run: |
           echo "Running ranking script..."
-          # Add export for headless mode
-          export HEADLESS=true
           python ranking.py
         
-      # NEW STEP: Force a file change to ensure there's something to commit
+      # Force a file change to ensure there's something to commit
       - name: Create timestamp file
         run: |
           echo "ATP Rankings last checked: $(date)" > last_check.txt
