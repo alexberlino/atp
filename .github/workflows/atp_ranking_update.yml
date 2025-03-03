@@ -1,4 +1,4 @@
-name: Daily ATP Rankings Update (Debug)
+name: Daily ATP Rankings Update
 
 on:
   schedule:
@@ -16,15 +16,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Full history
+          fetch-depth: 0  # Get all history to ensure proper git operations
 
-      - name: Setup Debug Info
-        run: |
-          echo "GitHub Actions Workspace: $GITHUB_WORKSPACE"
-          echo "Current directory: $(pwd)"
-          echo "Directory contents: $(ls -la)"
-          whoami
-      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -32,79 +25,44 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.name "GitHub Actions Bot"
+          git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          echo "Git configuration:"
-          git config --list
 
-      - name: Install Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-          echo "Chrome version: $(google-chrome --version)"
-
-      - name: Install chromedriver
-        run: |
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d. -f1)
-          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-          wget -q "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
-          sudo chmod +x /usr/local/bin/chromedriver
-          echo "Chromedriver version: $(chromedriver --version)"
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-python-${{ hashFiles('requirements.txt') }}-v3
+          restore-keys: |
+            ${{ runner.os }}-python-
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install -r requirements.txt
-          echo "Installed Python packages:"
-          pip list
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser
+          pip install undetected-chromedriver selenium pandas
 
-      - name: Run ranking update script with debug
+      - name: Run ranking update script
         env:
-          HEADLESS: "true"
-          PYTHONUNBUFFERED: "1"
+          # Add environment variables that might be needed for headless Chrome
+          PYTHONUNBUFFERED: 1
+          DISPLAY: :99
         run: |
-          echo "Starting ATP rankings update script..."
-          # Create a debug file to verify file writing works
-          echo "Debug test" > debug_test.txt
+          echo "Running ranking script..."
+          # Add export for headless mode
+          export HEADLESS=true
           python ranking.py
-          echo "Script completed"
-          echo "Directory contents after script:"
-          ls -la
-          echo "Git status:"
-          git status
-
-      - name: Force change creation
+          
+      - name: Force update timestamp
         run: |
-          # Always create a file change
-          echo "ATP Rankings last checked at $(date)" > ranking_last_check.txt
-          echo "Created forced change file"
-          echo "Git status after force change:"
-          git status
-
-      - name: Commit changes
+          # Create a timestamp file to ensure we have a change to commit
+          echo "Last ranking check: $(date)" > last_check_timestamp.txt
+        
+      - name: Commit and push changes
         run: |
+          # Always add all changes including the timestamp file
           git add -A
-          git status
-          git commit -m "ATP rankings update $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
-          echo "Git status after commit:"
-          git status
-
-      - name: Push changes
-        run: |
-          echo "Attempting to push changes..."
-          git push origin || echo "Push failed, will try pull and push"
-          
-          # If push fails, try pulling first
-          if [ $? -ne 0 ]; then
-            echo "Pull before push..."
-            git pull --rebase origin main
-            git push origin
-          fi
-          
-          echo "Push attempt completed"
+          git commit -m "ATP rankings update for $(date +'%Y-%m-%d')"
+          git push
+          echo "Changes pushed successfully!"
