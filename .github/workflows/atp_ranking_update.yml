@@ -55,7 +55,8 @@ jobs:
         run: python ranking.py
 
       - name: Create timestamp file
-        run: echo "ATP Rankings last checked: $(date)" > last_check.txt
+        run: |
+          echo "ATP Rankings last checked: $(date +'%Y-%m-%d')"  > last_check.txt
 
       - name: Commit and push changes if any
         run: |
