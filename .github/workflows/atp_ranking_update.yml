@@ -32,14 +32,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-python-${{ hashFiles('requirements.txt') }}-v3
+          key: ${{ runner.os }}-python-${{ hashFiles('requirements.txt') || 'default' }}-v3
           restore-keys: |
             ${{ runner.os }}-python-
 
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
+          sudo apt-get install -y chromium chromium-driver
           pip install -r requirements.txt
           pip install undetected-chromedriver selenium webdriver-manager pandas
 
@@ -59,7 +59,8 @@ jobs:
 
       - name: Commit and push changes if any
         run: |
-          git pull --rebase origin main  # Pull latest changes before pushing
+          BRANCH=$(git symbolic-ref --short HEAD)
+          git pull --rebase origin $BRANCH  # Pull latest changes before pushing
           git add -A
           git commit -m "Automated ATP rankings update for $(date +'%Y-%m-%d')" || echo "No changes to commit"
-          git push
+          git push origin $BRANCH
