@@ -44,7 +44,9 @@ jobs:
           pip install undetected-chromedriver selenium webdriver-manager pandas
 
       - name: Start virtual display (Xvfb)
-        run: Xvfb :99 -screen 0 1920x1080x24 & sleep 3
+        run: |
+          Xvfb :99 -screen 0 1920x1080x24 &
+          sleep 3
 
       - name: Run ranking update script
         env:
@@ -59,5 +61,5 @@ jobs:
         run: |
           git pull --rebase origin main  # Pull latest changes before pushing
           git add -A
-          git commit -m "Automated  ATP rankings update for $(date +'%Y-%m-%d')" || echo "No changes to commit"
+          git commit -m "Automated ATP rankings update for $(date +'%Y-%m-%d')" || echo "No changes to commit"
           git push
