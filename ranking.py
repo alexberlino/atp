@@ -1,9 +1,6 @@
 import shutil
 import undetected_chromedriver as uc
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -17,8 +14,8 @@ import subprocess
 
 
 def setup_driver():
-    options = Options()
-    options.add_argument("--headless")  # Run in headless mode
+    options = uc.ChromeOptions()
+    options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -26,9 +23,10 @@ def setup_driver():
     options.add_argument(
         '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
 
-    # Auto-install the correct ChromeDriver
-    service = Service(ChromeDriverManager().install())
-    return webdriver.Chrome(service=service, options=options)
+    # Use undetected_chromedriver instead of regular Chrome
+    return uc.Chrome(options=options)
+
+
 def is_properly_formatted_row(cells):
     """
     Check if the row matches the expected format of the ranking data
@@ -59,7 +57,7 @@ def is_properly_formatted_row(cells):
 
         # Check points (should be a number without text)
         points = cells[6].text.strip()
-        if not points.replace(",", "").isdigit():
+        if not re.match(r'^[\d,]+$', points):
             return False
 
         return True
@@ -124,14 +122,32 @@ def extract_rankings():
         print(f"Navigating to {url}...")
         driver.get(url)
 
+        print("Waiting for page to stabilize...")
+        # Give the page some time to fully load JavaScript content
+        time.sleep(5)
+
         print("Waiting for page load...")
         WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "table tbody tr")))
 
         print("Finding ranking rows...")
-        rows = driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
+        # Try different selectors
+        try:
+            rows = driver.find_elements(
+                By.CSS_SELECTOR, ".ranking-table tbody tr")
+        except:
+            try:
+                rows = driver.find_elements(
+                    By.XPATH, "//table[contains(@class, 'ranking')]//tbody/tr")
+            except:
+                rows = driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
 
         print(f"Found {len(rows)} potential rows")
+
+        # Debug: Print the first row HTML
+        if rows:
+            print("First row HTML structure:")
+            print(rows[0].get_attribute('outerHTML'))
 
         data = []
         found_first_valid = False
@@ -159,6 +175,7 @@ def extract_rankings():
         print(f"Error during scraping: {e}")
         if driver:
             print("Current URL:", driver.current_url)
+            print("Page source (first 500 chars):", driver.page_source[:500])
         return []
 
     finally:
