@@ -11,9 +11,14 @@ import re
 import pandas as pd
 import subprocess
 from datetime import datetime
+import undetected_chromedriver as uc
+
+
 
 
 def setup_driver():
+    driver = uc.Chrome(use_subprocess=True)
+    return driver
     options = uc.ChromeOptions()
     options.add_argument('--start-maximized')
     options.add_argument('--disable-gpu')
