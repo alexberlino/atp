@@ -65,12 +65,13 @@ jobs:
         run: |
           echo "ATP Rankings last checked: $(date +'%Y-%m-%d')"  > last_check.txt
 
-      - name: Commit and push changes if any
+      - name: Ensure latest changes are pulled
         run: |
           BRANCH=$(git symbolic-ref --short HEAD)
-          git stash  # Stash any uncommitted changes
-          git pull --rebase origin $BRANCH  # Pull latest changes before pushing
-          git stash pop || echo "No changes to restore"  # Restore changes if needed
+          git pull --rebase origin $BRANCH || (git fetch --all && git reset --hard origin/$BRANCH)
+
+      - name: Commit and push changes if any
+        run: |
           git add -A
           git commit -m "Automated ATP rankings update for $(date +'%Y-%m-%d')" || echo "No changes to commit"
-          git push origin $BRANCH
+          git push origin $BRANCH || echo "Push failed, likely no new changes."
