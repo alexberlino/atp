@@ -36,10 +36,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-python-
 
-      - name: Install dependencies
+      - name: Install latest Chromium and ChromeDriver
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium chromium-driver
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          CHROME_VERSION=$(chromium-browser --version)
+          CHROMEDRIVER_VERSION=$(chromedriver --version)
+          echo "Installed Chromium: $CHROME_VERSION"
+          echo "Installed ChromeDriver: $CHROMEDRIVER_VERSION"
+
+      - name: Install dependencies
+        run: |
           pip install -r requirements.txt
           pip install undetected-chromedriver selenium webdriver-manager pandas
 
