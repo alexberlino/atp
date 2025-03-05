@@ -36,9 +36,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-python-
 
-      - name: Setup Chrome
+      - name: Set up Chrome with specific version
         uses: browser-actions/setup-chrome@v1 
-
+        with:
+          chrome-version: '133.0.6943.0'  # Set the required version of Chrome (make sure this matches)
 
       - name: Install dependencies
         run: |
