@@ -41,6 +41,15 @@ jobs:
         with:
           chrome-version: '133.0.6943.0'  # Set the required version of Chrome (make sure this matches)
 
+      - name: Install chromedriver
+        run: |
+          # Download and install chromedriver matching the installed chrome version
+          CHROME_VERSION=$(google-chrome-stable --version | awk '{print $3}')
+          CHROMEDRIVER_VERSION=$(curl -sSL https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
+          wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
