@@ -36,14 +36,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-python-
 
-      - name: Install latest Chromium and ChromeDriver
+      - name: Install matching Chrome and ChromeDriver
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-          CHROME_VERSION=$(chromium-browser --version)
-          CHROMEDRIVER_VERSION=$(chromedriver --version)
+          sudo apt-get install -y chromium-browser
+          CHROME_VERSION=$(chromium-browser --version | awk '{print $2}')
           echo "Installed Chromium: $CHROME_VERSION"
-          echo "Installed ChromeDriver: $CHROMEDRIVER_VERSION"
+          LATEST_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
+          wget -N https://chromedriver.storage.googleapis.com/$LATEST_DRIVER_VERSION/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          chmod +x /usr/local/bin/chromedriver
 
       - name: Install dependencies
         run: |
