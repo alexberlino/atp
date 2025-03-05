@@ -61,7 +61,9 @@ jobs:
       - name: Commit and push changes if any
         run: |
           BRANCH=$(git symbolic-ref --short HEAD)
+          git stash  # Stash any uncommitted changes
           git pull --rebase origin $BRANCH  # Pull latest changes before pushing
+          git stash pop || echo "No changes to restore"  # Restore changes if needed
           git add -A
           git commit -m "Automated ATP rankings update for $(date +'%Y-%m-%d')" || echo "No changes to commit"
           git push origin $BRANCH
