@@ -43,11 +43,21 @@ jobs:
 
       - name: Install chromedriver
         run: |
-          # Download and install chromedriver matching the installed chrome version
+          # Get the installed Chrome version
           CHROME_VERSION=$(google-chrome-stable --version | awk '{print $3}')
-          CHROMEDRIVER_VERSION=$(curl -sSL https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
-          wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
+          
+          # Fetch the matching chromedriver version
+          CHROMEDRIVER_VERSION=$(curl -sSL "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+          
+          # Check if the version was fetched successfully
+          if [ -z "$CHROMEDRIVER_VERSION" ]; then
+            echo "Failed to fetch Chromedriver version for Chrome $CHROME_VERSION"
+            exit 1
+          fi
+
+          # Download and install chromedriver matching the installed chrome version
+          wget "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" -O chromedriver.zip
+          unzip chromedriver.zip
           sudo mv chromedriver /usr/local/bin/
 
       - name: Install dependencies
@@ -68,7 +78,7 @@ jobs:
 
       - name: Create timestamp file
         run: |
-          echo "ATP Rankings last checked: $(date +'%Y-%m-%d')"  > last_check.txt
+          echo "ATP Rankings last checked: $(date +'%Y-%m-%d')" > last_check.txt
 
       - name: Ensure latest changes are pulled
         run: |
