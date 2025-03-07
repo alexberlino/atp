@@ -10,21 +10,23 @@ import time
 import re
 import pandas as pd
 import subprocess
-from datetime import datetime
-import undetected_chromedriver as uc
 
 
 def setup_driver():
-    driver = uc.Chrome(use_subprocess=True)
-    return driver
     options = uc.ChromeOptions()
     options.add_argument('--start-maximized')
     options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--headless')  # Running in headless mode (no GUI)
     options.add_argument(
         '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
-    return uc.Chrome(options=options)
+
+    # Optional: Set the binary path for Chrome if needed
+    # options.binary_location = "/path/to/your/chrome"  # Set the correct path if necessary
+
+    driver = uc.Chrome(options=options)
+    return driver
 
 
 def is_properly_formatted_row(cells):
