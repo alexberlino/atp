@@ -1,12 +1,15 @@
 [phases.setup]
-nixPkgs = ["python311", "python311Packages.pip", "wget", "gnupg", "chromium"]
+# We need to specifically include python311Packages.pip and make it explicit
+nixPkgs = ["python311", "python311Packages.python", "python311Packages.pip", "wget", "gnupg", "chromium"]
 nixOverlays = []
 nixpkgsArchive = "nixos-23.11"
 
 [phases.install]
 dependsOn = ["setup"]
 cmds = [
-  "python3 -m pip install --upgrade pip setuptools --break-system-packages",
+  # Let's install pip directly first to ensure it's available
+  "nix-env -iA nixpkgs.python311Packages.pip",
+  # Then we can use pip
   "python3 -m pip install -r requirements.txt --break-system-packages"
 ]
 
