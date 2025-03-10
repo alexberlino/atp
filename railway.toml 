@@ -1,0 +1,8 @@
+[build]
+builder = "nixpacks"
+buildCommand = ""
+
+[deploy]
+startCommand = ""
+healthcheckPath = "/"
+healthcheckTimeout = 100

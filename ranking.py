@@ -12,22 +12,22 @@ import pandas as pd
 import subprocess
 
 
+
+
+
 def setup_driver():
+
+    # Configure Chrome options
     options = uc.ChromeOptions()
-    options.add_argument('--start-maximized')
-    options.add_argument('--disable-gpu')
+    options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--headless')  # Running in headless mode (no GUI)
-    options.add_argument(
-        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+    options.binary_location = "/nix/store/*/chromium/bin/chromium"  # Chromium from nixpkgs
 
-    # Optional: Set the binary path for Chrome if needed
-    # options.binary_location = "/path/to/your/chrome"  # Set the correct path if necessary
+# Initialize the driver with these options
 
     driver = uc.Chrome(options=options)
     return driver
-
 
 def is_properly_formatted_row(cells):
     """

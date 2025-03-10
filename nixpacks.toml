@@ -1,8 +1,13 @@
 [phases.setup]
-commands = [
-    "apt-get update",  # Update the package list
-    "apt-get install -y wget",  # Install wget if it's not already installed
-    "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb",  # Download Chrome
-    "dpkg -i google-chrome-stable_current_amd64.deb",  # Install Chrome
-    "apt-get install -f",  # Fix dependencies
+nixPkgs = ["wget", "gnupg", "chromium"]
+
+[phases.install]
+cmds = [
+  "python -m venv /opt/venv",
+  ". /opt/venv/bin/activate",
+  "pip install --upgrade pip setuptools",
+  "pip install -r requirements.txt"
 ]
+
+[start]
+cmd = "python ranking.py"
