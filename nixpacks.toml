@@ -1,15 +1,16 @@
 [phases.setup]
-nixPkgs = ["python311", "python311Packages.pip", "python311Packages.setuptools", "wget", "gnupg", "chromium"]
+nixPkgs = ["python311", "wget", "gnupg", "chromium"]
 nixOverlays = []
 nixpkgsArchive = "nixos-23.11"
 
 [phases.install]
 dependsOn = ["setup"]
 cmds = [
-  # Use Nix's Python to run pip
-  "/nix/store/*/bin/python3 -m ensurepip --upgrade",
-  "/nix/store/*/bin/python3 -m pip install -r requirements.txt --break-system-packages"
+  # Create and use a virtual environment
+  "python3 -m venv .venv",
+  ".venv/bin/pip install --upgrade pip setuptools",
+  ".venv/bin/pip install -r requirements.txt"
 ]
 
 [start]
-cmd = "python3 ranking.py"
+cmd = ".venv/bin/python ranking.py"
