@@ -1,33 +1,57 @@
 import shutil
+import os
+import sys
+import csv
+import re
+import time
+import subprocess
+from datetime import datetime
+
+import pandas as pd
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import os
-import csv
-from datetime import datetime
-import time
-import re
-import pandas as pd
-import subprocess
 
+# Check and set the Chrome executable path for Nix environments
+chrome_path = shutil.which('chromium') or \
+    shutil.which('chromium-browser') or \
+    shutil.which('google-chrome') or \
+    shutil.which('google-chrome-stable')
 
+if not chrome_path:
+    print("Error: Chrome/Chromium executable not found")
+    sys.exit(1)
 
+os.environ["CHROME_EXECUTABLE_PATH"] = chrome_path
+print(f"Using Chrome executable at: {chrome_path}")
 
 
 def setup_driver():
+    chrome_options = uc.ChromeOptions()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--disable-gpu')
 
-    # Configure Chrome options
-    options = uc.ChromeOptions()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    options.binary_location = "/nix/store/*/chromium/bin/chromium"  # Chromium from nixpkgs
+    # Use the Chrome executable path we found earlier
+    chrome_executable_path = os.environ.get("CHROME_EXECUTABLE_PATH")
 
-# Initialize the driver with these options
+    try:
+        driver = uc.Chrome(
+            options=chrome_options,
+            executable_path=chrome_executable_path,
+            version_main=126  # Use the version number that matches your installed Chrome
+        )
+        return driver
+    except Exception as e:
+        print(f"Error initializing Chrome driver: {e}")
+        sys.exit(1)
 
-    driver = uc.Chrome(options=options)
-    return driver
+
+# Use the driver
+driver = setup_driver()
+
 
 def is_properly_formatted_row(cells):
     """
