@@ -1,14 +1,14 @@
 [phases.setup]
 nixPkgs = ["python311", "python311Packages.pip", "wget", "gnupg", "chromium"]
 nixOverlays = []
-nixpkgsArchive = "nixpkgs-23.11"
+nixpkgsArchive = "nixos-23.11"
 
 [phases.install]
 dependsOn = ["setup"]
 cmds = [
-  "/nix/store/*/bin/python3 -m pip install --upgrade pip setuptools",
-  "/nix/store/*/bin/python3 -m pip install -r requirements.txt"
+  "python3 -m pip install --upgrade pip setuptools --break-system-packages",
+  "python3 -m pip install -r requirements.txt --break-system-packages"
 ]
 
 [start]
-cmd = "/nix/store/*/bin/python3 ranking.py"
+cmd = "python3 ranking.py"
