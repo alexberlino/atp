@@ -1,6 +1,8 @@
 [phases.setup]
 commands = [
-    "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb", # Download Chrome
+    "apt-get update",  # Update the package list
+    "apt-get install -y wget",  # Install wget if it's not already installed
+    "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb",  # Download Chrome
     "dpkg -i google-chrome-stable_current_amd64.deb",  # Install Chrome
     "apt-get install -f",  # Fix dependencies
 ]
