@@ -1,25 +1,21 @@
 [phases.setup]
-nixPkgs = [
-  "python311", 
-  "python311Packages.pip", 
-  "python311Packages.setuptools", 
-  "wget", 
-  "gnupg", 
-  "chromium"
+aptPkgs = [
+  "wget",
+  "gnupg",
+  "unzip",
+  "libglib2.0-0",
+  "libnss3",
+  "libgconf-2-4",
+  "libfontconfig1",
+  "xvfb",
+  "google-chrome-stable"
 ]
-nixOverlays = []
-nixpkgsArchive = "nixos-23.11"
 
 [phases.install]
-dependsOn = ["setup"]
 cmds = [
-  # Create and use a virtual environment that's isolated from Nix
-  "python3 -m venv /app/venv",
-  # Install specific packages directly (better than relying on requirements.txt at first)
-  "/app/venv/bin/pip install undetected_chromedriver selenium pandas",
-  # Install the rest of requirements if needed
-  "/app/venv/bin/pip install -r requirements.txt || true"
+  "pip install --upgrade pip setuptools",
+  "pip install -r requirements.txt"
 ]
 
 [start]
-cmd = "/app/venv/bin/python ranking.py"
+cmd = "xvfb-run -a python ranking.py"
