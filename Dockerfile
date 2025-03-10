@@ -4,21 +4,13 @@ FROM python:3.9
 # Set the working directory
 WORKDIR /app
 
-# Copy all files from the current directory to the container
-COPY . /app
-
-# Install required dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Default command to run your script
-CMD ["python", "your_script.py"]
-
-RUN sudo apt-get update && \
-    sudo apt-get install -y --no-install-recommends wget gnupg && \
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
-    sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
-    sudo apt-get update && \
-    sudo apt-get install -y --no-install-recommends \
+# Install system dependencies for Chrome
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends wget gnupg && \
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
     unzip \
     libglib2.0-0 \
     libnss3 \
@@ -26,5 +18,14 @@ RUN sudo apt-get update && \
     libfontconfig1 \
     xvfb \
     google-chrome-stable && \
-    sudo apt-get clean && \
-    sudo rm -rf /var/lib/apt/lists/*
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy all files from the current directory to the container
+COPY . /app
+
+# Install required Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Default command to run your script
+CMD ["python", "your_script.py"]
