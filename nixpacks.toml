@@ -1,10 +1,8 @@
 [phases.setup]
-nixPkgs = ["wget", "gnupg", "chromium"]
+nixPkgs = ["python311", "python311Packages.pip", "wget", "gnupg", "chromium"]
 
 [phases.install]
 cmds = [
-  "python -m venv /opt/venv",
-  ". /opt/venv/bin/activate",
   "pip install --upgrade pip setuptools",
   "pip install -r requirements.txt"
 ]
