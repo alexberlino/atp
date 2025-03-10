@@ -7,8 +7,7 @@ aptPkgs = [
   "libnss3",
   "libgconf-2-4",
   "libfontconfig1",
-  "xvfb",
-  "google-chrome-stable"
+  "xvfb"
 ]
 
 [phases.install]
