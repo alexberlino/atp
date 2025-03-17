@@ -3,6 +3,6 @@ builder = "nixpacks"
 buildCommand = ""
 
 [deploy]
-startCommand = "xvfb-run -a python ranking.py"
+startCommand = "xvfb-run -a python ranking_railway.py"
 healthcheckPath = "/"
 healthcheckTimeout = 100
