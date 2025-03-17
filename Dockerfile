@@ -1,9 +1,10 @@
 FROM ubuntu:latest
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update --fix-missing && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     wget \
+    curl \
     gnupg \
     unzip \
     libglib2.0-0 \
@@ -11,21 +12,21 @@ RUN apt-get update --fix-missing && \
     libfontconfig1 \
     fonts-liberation \
     xvfb \
-    curl \
     python3 \
     python3-pip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Add Google Chrome repository and install Chrome
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | tee /usr/share/keyrings/google-chrome-keyring.gpg > /dev/null && \
-    echo "deb [signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list && \
+# Install Google Chrome
+RUN apt-get update && \
+    apt-get install -y wget curl && \
+    wget -q -O /usr/share/keyrings/google-chrome-keyring.gpg https://dl.google.com/linux/linux_signing_key.pub && \
+    echo "deb [signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] https://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends google-chrome-stable && \
-    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install ChromeDriver
+# Install ChromeDriver (auto-matching Chrome version)
 RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}') && \
     CHROME_MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d. -f1) && \
     echo "Detected Chrome version: $CHROME_VERSION (Major: $CHROME_MAJOR_VERSION)" && \
