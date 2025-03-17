@@ -20,19 +20,18 @@ os.environ["CHROME_EXECUTABLE_PATH"] = chrome_path
 print(f"Using Chrome executable at: {chrome_path}")
 
 
-
 def setup_driver():
     chrome_options = uc.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
-    # chrome_options.add_argument('--headless')
+    # chrome_options.add_argument('--headless')  # Enable headless mode if needed
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument(
-        "user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36")
-
+        "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36")
 
     # Use the Chrome executable path we found earlier
-    chrome_executable_path = os.environ.get("CHROME_EXECUTABLE_PATH")
+    chrome_executable_path = os.environ.get(
+        "CHROME_EXECUTABLE_PATH", "/usr/local/bin/chromedriver")
 
     try:
         driver = uc.Chrome(
