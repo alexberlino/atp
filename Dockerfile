@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update --fix-missing && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     wget \
@@ -16,27 +16,29 @@ RUN apt-get update --fix-missing && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Chrome from "Chrome for Testing"
-RUN wget -q -O /tmp/chrome-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/134.0.6325.0/linux64/chrome-linux64.zip && \
-    unzip /tmp/chrome-linux64.zip -d /usr/local/bin/ && \
+# Install Chrome for Testing (version 134.0.6998.0)
+RUN wget -q -O /tmp/chrome-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.0/linux64/chrome-linux64.zip && \
+    unzip /tmp/chrome-linux64.zip -d /tmp && \
     rm /tmp/chrome-linux64.zip && \
-    chmod +x /usr/local/bin/chrome-linux64/chrome
+    mv /tmp/chrome-linux64/chrome /usr/local/bin/chrome && \
+    chmod +x /usr/local/bin/chrome
 
-# Install ChromeDriver that matches the Chrome version
-RUN wget -q -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/134.0.6325.0/linux64/chromedriver-linux64.zip && \
-    unzip /tmp/chromedriver-linux64.zip -d /usr/local/bin/ && \
+# Install ChromeDriver for Testing (version 134.0.6998.0)
+RUN wget -q -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.0/linux64/chromedriver-linux64.zip && \
+    unzip /tmp/chromedriver-linux64.zip -d /tmp && \
     rm /tmp/chromedriver-linux64.zip && \
-    chmod +x /usr/local/bin/chromedriver-linux64/chromedriver
+    mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver && \
+    chmod +x /usr/local/bin/chromedriver
 
 # Set working directory
 WORKDIR /app
 
-# Copy requirements and install dependencies
+# Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN python3 -m pip install --no-cache-dir -r requirements.txt
 
 # Copy application files
 COPY . .
 
-# Set start command
+# Set the start command to run your Railway-optimized script
 CMD ["xvfb-run", "-a", "python3", "ranking_railway.py"]
