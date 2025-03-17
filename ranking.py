@@ -14,25 +14,22 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 # Check and set the Chrome executable path for Nix environments
-chrome_path = shutil.which('chromium') or \
-    shutil.which('chromium-browser') or \
-    shutil.which('google-chrome') or \
-    shutil.which('google-chrome-stable')
-
-if not chrome_path:
-    print("Error: Chrome/Chromium executable not found")
-    sys.exit(1)
+chrome_path = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 os.environ["CHROME_EXECUTABLE_PATH"] = chrome_path
 print(f"Using Chrome executable at: {chrome_path}")
 
 
+
 def setup_driver():
     chrome_options = uc.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--headless')
+    # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument(
+        "user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36")
+
 
     # Use the Chrome executable path we found earlier
     chrome_executable_path = os.environ.get("CHROME_EXECUTABLE_PATH")
@@ -40,8 +37,8 @@ def setup_driver():
     try:
         driver = uc.Chrome(
             options=chrome_options,
-            executable_path=chrome_executable_path,
-            version_main=126  # Use the version number that matches your installed Chrome
+            driver_executable_path="/usr/local/bin/chromedriver",
+            version_main=134  # Ensure this matches your Chrome version
         )
         return driver
     except Exception as e:
