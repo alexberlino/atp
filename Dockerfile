@@ -1,11 +1,10 @@
 FROM ubuntu:latest
 
-# Install system dependencies
+# Install dependencies
 RUN apt-get update --fix-missing && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     wget \
     curl \
-    gnupg \
     unzip \
     libglib2.0-0 \
     libnss3 \
@@ -17,24 +16,17 @@ RUN apt-get update --fix-missing && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome
-RUN apt-get update && \
-    apt-get install -y wget curl && \
-    wget -q -O /usr/share/keyrings/google-chrome-keyring.gpg https://dl.google.com/linux/linux_signing_key.pub && \
-    echo "deb [signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] https://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends google-chrome-stable && \
-    rm -rf /var/lib/apt/lists/*
+# Install Chrome from "Chrome for Testing"
+RUN wget -q -O /tmp/chrome-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/134.0.6325.0/linux64/chrome-linux64.zip && \
+    unzip /tmp/chrome-linux64.zip -d /usr/local/bin/ && \
+    rm /tmp/chrome-linux64.zip && \
+    chmod +x /usr/local/bin/chrome-linux64/chrome
 
-# Install ChromeDriver (auto-matching Chrome version)
-RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}') && \
-    CHROME_MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d. -f1) && \
-    echo "Detected Chrome version: $CHROME_VERSION (Major: $CHROME_MAJOR_VERSION)" && \
-    CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip" && \
-    wget -q -O /tmp/chromedriver.zip "$CHROMEDRIVER_URL" && \
-    unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
-    rm /tmp/chromedriver.zip && \
-    chmod +x /usr/local/bin/chromedriver
+# Install ChromeDriver that matches the Chrome version
+RUN wget -q -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/134.0.6325.0/linux64/chromedriver-linux64.zip && \
+    unzip /tmp/chromedriver-linux64.zip -d /usr/local/bin/ && \
+    rm /tmp/chromedriver-linux64.zip && \
+    chmod +x /usr/local/bin/chromedriver-linux64/chromedriver
 
 # Set working directory
 WORKDIR /app
