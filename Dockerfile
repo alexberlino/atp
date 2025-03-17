@@ -41,4 +41,4 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages -r requirement
 COPY . .
 
 # Set start command (using your Railway-optimized script)
-CMD ["xvfb-run", "-a", "python3", "ranking_railway.py"]
+CMD ["xvfb-run", "-a", "python3", "-u", "ranking_railway.py"]
