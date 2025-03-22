@@ -13,12 +13,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+print("Script has started...", flush=True)
+
 # Set Chrome and ChromeDriver paths for Railway
-chrome_path = "/usr/bin/google-chrome-stable"
+chrome_path = "/usr/local/bin/chrome"
 chromedriver_path = "/usr/local/bin/chromedriver"
 
 os.environ["CHROME_EXECUTABLE_PATH"] = chrome_path
 print(f"Using Chrome executable at: {chrome_path}", flush=True)
+
+print("Starting ATP rankings extraction on Railway...", flush=True)
 
 
 def setup_driver():
@@ -29,10 +33,14 @@ def setup_driver():
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument(
         "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36")
+    # Explicitly set the binary location
+    chrome_options.binary_location = chrome_path
+
     try:
         driver = uc.Chrome(
             options=chrome_options,
-            driver_executable_path=chromedriver_path
+            driver_executable_path=chromedriver_path,
+            version_main=134  # Explicitly set the Chrome major version
         )
         return driver
     except Exception as e:

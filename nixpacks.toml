@@ -8,7 +8,7 @@ aptPkgs = [
   "libgconf-2-4",
   "libfontconfig1",
   "xvfb"
-]
+] 
 
 [phases.install]
 cmds = [
